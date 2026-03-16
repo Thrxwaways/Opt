@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>VAPEOPT | SPACESHIP HUD</title>
+    <title>VAPEOPT</title>
     <style>
         * {
             margin: 0;
@@ -329,7 +329,7 @@
         }
 
         .cargo-name {
-            font-size: 1.5rem;
+            font-size: 1.3rem; /* Уменьшено с 1.5rem */
             font-weight: 700;
             color: #cfdfff;
             text-transform: uppercase;
@@ -382,13 +382,13 @@
         }
 
         .ship-display {
-            margin-top: 20px;
+            margin-top: 5px; /* Уменьшено с 20px */
             text-align: center;
             font-size: 1.3rem;
             color: #8fb8ff;
             letter-spacing: 5px;
             border-top: 2px solid #3e7bff;
-            padding-top: 15px;
+            padding-top: 10px; /* Уменьшено с 15px */
             position: relative;
             z-index: 2;
             font-weight: 400;
@@ -409,7 +409,7 @@
             animation: arrowBounce 1s ease-in-out infinite;
             display: inline-block;
             filter: drop-shadow(0 0 10px #3e7bff);
-            transform: rotate(180deg);
+            transform: rotate(0deg); /* Изменено с rotate(180deg) */
         }
 
         .arrow-left {
@@ -421,18 +421,18 @@
         }
 
         @keyframes arrowBounce {
-            0%, 100% { transform: rotate(180deg) translateY(0); }
-            50% { transform: rotate(180deg) translateY(-8px); }
+            0%, 100% { transform: rotate(0deg) translateY(0); } /* Изменено */
+            50% { transform: rotate(0deg) translateY(-8px); } /* Изменено */
         }
 
         @keyframes arrowLeftBounce {
-            0%, 100% { transform: rotate(180deg) translateX(0) translateY(0); }
-            50% { transform: rotate(180deg) translateX(-5px) translateY(-8px); }
+            0%, 100% { transform: rotate(0deg) translateX(0) translateY(0); } /* Изменено */
+            50% { transform: rotate(0deg) translateX(-5px) translateY(-8px); } /* Изменено */
         }
 
         @keyframes arrowRightBounce {
-            0%, 100% { transform: rotate(180deg) translateX(0) translateY(0); }
-            50% { transform: rotate(180deg) translateX(5px) translateY(-8px); }
+            0%, 100% { transform: rotate(0deg) translateX(0) translateY(0); } /* Изменено */
+            50% { transform: rotate(0deg) translateX(5px) translateY(-8px); } /* Изменено */
         }
 
         @keyframes flicker {
@@ -606,7 +606,7 @@
         @media (max-width: 400px) {
             .ship-name { font-size: 2.8rem; }
             .cargo-icon { font-size: 2.5rem; }
-            .cargo-name { font-size: 1.2rem; }
+            .cargo-name { font-size: 1.1rem; } /* Уменьшено с 1.2rem */
             .ship-display { font-size: 1rem; gap: 10px; }
             .arrow-up { font-size: 1.5rem; }
             .last-row .cargo-module { width: calc(50% - 7.5px); }
