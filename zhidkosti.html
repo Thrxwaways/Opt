@@ -1,0 +1,1418 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>VAPEOPT | КАТАЛОГ ЖИДКОСТЕЙ</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Montserrat', 'Orbitron', sans-serif;
+        }
+  
+  /* Убирает синий квадрат/подсветку при нажатии на всех элементах */
+* {
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
+}
+
+/* Для старых браузеров и дополнительная защита */
+a:focus,
+button:focus,
+div:focus,
+.product-card:focus,
+.cargo-module:focus,
+.modal-item:focus,
+.quantity-btn:focus,
+.back-link:focus,
+.admin-ship:focus,
+.cart-icon:focus {
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+/* Убираем стандартную обводку фокуса во всех браузерах */
+:focus {
+    outline: none !important;
+}
+
+/* Для Firefox */
+::-moz-focus-inner {
+    border: 0;
+}
+
+/* Для IE/Edge */
+::selection {
+    background: transparent;
+}
+
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Orbitron:wght@400;700;900&display=swap');
+
+        body {
+            background: #03050f;
+            background-image: radial-gradient(ellipse at 50% 30%, #1b2b55 0%, #020412 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px;
+        }
+
+        .ship-hud {
+            width: 100%;
+            max-width: 500px;
+            height: 95vh;
+            max-height: 900px;
+            background: rgba(2, 10, 22, 0.8);
+            backdrop-filter: blur(12px);
+            border: 3px solid #3e7bff;
+            border-radius: 50px;
+            box-shadow: 0 0 60px #1e4fcf, 0 0 30px #3e7bff inset;
+            padding: 30px 22px;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .ship-hud::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 200%;
+            height: 10px;
+            background: linear-gradient(90deg, transparent, #3e7bff, transparent);
+            animation: scanLine 4s linear infinite;
+            opacity: 0.5;
+        }
+
+        @keyframes scanLine {
+            0% { top: 0; }
+            100% { top: 100%; }
+        }
+
+        .hologram-ring {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 400px;
+            height: 400px;
+            border: 2px dashed #3e7bff30;
+            border-radius: 50%;
+            pointer-events: none;
+            animation: rotateRing 20s linear infinite;
+        }
+
+        .hologram-ring2 {
+            width: 300px;
+            height: 300px;
+            border: 1px solid #3e7bff20;
+            border-radius: 50%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            animation: rotateRingReverse 15s linear infinite;
+        }
+
+        @keyframes rotateRing {
+            from { transform: translate(-50%, -50%) rotate(0deg); }
+            to { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+
+        @keyframes rotateRingReverse {
+            from { transform: translate(-50%, -50%) rotate(0deg); }
+            to { transform: translate(-50%, -50%) rotate(-360deg); }
+        }
+
+        .ship-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .ship-title {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .ship-name {
+            font-size: 2.5rem;
+            font-weight: 900;
+            color: #8fb8ff;
+            text-shadow: 0 0 20px #3e7bff, 0 0 40px #1e4fcf;
+            letter-spacing: 4px;
+            line-height: 1;
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        .ship-sub {
+            font-size: 0.8rem;
+            color: #afc9ff;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        .back-link {
+            background: #10213f;
+            border: 2px solid #3e7bff;
+            color: #8fb8ff;
+            width: 45px;
+            height: 45px;
+            border-radius: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            text-decoration: none;
+            box-shadow: 0 0 20px #3e7bff;
+            transition: 0.2s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .back-link::before {
+            content: '◄';
+            position: relative;
+            z-index: 2;
+            font-weight: normal;
+        }
+
+        .back-link::after {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, #3e7bff, #8fb8ff, #3e7bff);
+            border-radius: 27px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            z-index: 1;
+        }
+
+        .back-link:hover {
+            color: black;
+            transform: scale(1.1);
+            box-shadow: 0 0 30px #3e7bff;
+        }
+
+        .back-link:hover::after {
+            opacity: 1;
+            animation: rotate 1s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        /* Контейнер с прокруткой */
+        .products-scroll {
+            flex: 1;
+            overflow-y: auto;
+            padding-right: 5px;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Разделы */
+        .section-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #8fb8ff;
+            margin: 20px 0 10px;
+            padding-bottom: 5px;
+            border-bottom: 2px solid #3e7bff;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-family: 'Montserrat', sans-serif;
+            position: sticky;
+            top: 0;
+            background: rgba(2, 10, 22, 0.9);
+            backdrop-filter: blur(5px);
+            z-index: 5;
+            padding-top: 5px;
+        }
+
+        .section-title.in-stock {
+            color: #3e7bff;
+            border-bottom-color: #3e7bff;
+        }
+
+        .section-title.out-of-stock {
+            color: #a0aec0;
+            border-bottom-color: #a0aec0;
+        }
+
+        /* Сетка товаров */
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .product-card {
+            background: rgba(8, 20, 40, 0.7);
+            backdrop-filter: blur(5px);
+            border: 3px solid #3e7bff;
+            border-radius: 25px;
+            padding: 12px 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            transition: 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .product-card:hover {
+            transform: translateY(-3px);
+            border-color: #8fb8ff;
+            box-shadow: 0 0 30px #3e7bff;
+        }
+
+        .product-card.out-of-stock {
+            border-color: #4a5568;
+            background: rgba(45, 55, 72, 0.5);
+            cursor: not-allowed;
+            opacity: 0.8;
+        }
+
+        .product-card.out-of-stock:hover {
+            transform: none;
+            border-color: #4a5568;
+            box-shadow: none;
+        }
+
+        .product-card.out-of-stock .product-image {
+            border-color: #4a5568;
+            opacity: 0.7;
+        }
+
+        .product-card.out-of-stock .product-name {
+            color: #a0aec0;
+        }
+
+        .product-card.out-of-stock .product-price {
+            border-color: #4a5568;
+            color: #a0aec0;
+            background: rgba(45, 55, 72, 0.3);
+        }
+
+        .product-card.new-item::before {
+            content: 'НОВИНКА';
+            position: absolute;
+            top: 10px;
+            left: -30px;
+            background: #2ecc71;
+            color: black;
+            padding: 5px 30px;
+            transform: rotate(-45deg);
+            font-size: 0.6rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            box-shadow: 0 0 20px #2ecc71;
+            z-index: 3;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        .product-image {
+            width: 80px;
+            height: 80px;
+            border-radius: 15px;
+            margin-bottom: 8px;
+            object-fit: cover;
+            border: 2px solid #3e7bff;
+            transition: all 0.3s ease;
+        }
+
+        .product-name {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #cfdfff;
+            text-align: center;
+            margin-bottom: 5px;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        .product-price {
+            font-size: 0.9rem;
+            color: #2ecc71;
+            border: 1px solid #2ecc71;
+            padding: 3px 10px;
+            border-radius: 15px;
+            font-weight: 600;
+            font-family: 'Montserrat', sans-serif;
+            transition: all 0.3s ease;
+        }
+
+        .out-of-stock-text {
+            font-size: 0.8rem;
+            color: #a0aec0;
+            text-transform: uppercase;
+            margin-top: 5px;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        .empty-message {
+            text-align: center;
+            color: #8fb8ff;
+            font-size: 1.2rem;
+            padding: 40px 20px;
+            border: 2px dashed #3e7bff;
+            border-radius: 30px;
+            background: rgba(8, 20, 40, 0.5);
+            font-family: 'Montserrat', sans-serif;
+            margin: 20px 0;
+        }
+
+        /* Модальное окно */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(2, 10, 22, 0.95);
+            backdrop-filter: blur(10px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            width: 90%;
+            max-width: 450px;
+            height: 80vh;
+            background: rgba(8, 20, 40, 0.9);
+            border: 3px solid #3e7bff;
+            border-radius: 30px;
+            box-shadow: 0 0 50px #3e7bff;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        /* Кнопка закрытия */
+        .modal-close-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(8, 20, 40, 0.8);
+            border: 2px solid #e74c3c;
+            color: #e74c3c;
+            width: 40px;
+            height: 40px;
+            border-radius: 20px;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-close-btn:hover {
+            background: #e74c3c;
+            color: black;
+            transform: scale(1.1);
+            box-shadow: 0 0 20px #e74c3c;
+        }
+
+        /* Верхняя часть с фото и названием */
+        .modal-header {
+            padding: 20px 25px 10px;
+            text-align: center;
+        }
+
+        .modal-product-name {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #8fb8ff;
+            margin-bottom: 10px;
+            font-family: 'Montserrat', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .modal-image-container {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+        }
+
+        .modal-product-image {
+            width: 150px;
+            height: 150px;
+            border-radius: 20px;
+            object-fit: cover;
+            border: 3px solid #3e7bff;
+            box-shadow: 0 0 30px #3e7bff;
+            transition: 0.3s;
+        }
+
+        /* Область скролла с вкусами */
+        .modal-scroll-area {
+            flex: 1;
+            overflow-y: auto;
+            padding: 0 25px;
+            margin-bottom: 5px;
+        }
+
+        /* Разделы наличия в модальном окне */
+        .stock-section {
+            margin-bottom: 15px;
+        }
+
+        .stock-section-title {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 8px;
+            padding-bottom: 3px;
+            border-bottom: 2px solid;
+            font-weight: 600;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        .stock-section-title.in-stock {
+            color: #3e7bff;
+            border-bottom-color: #3e7bff;
+        }
+
+        .stock-section-title.out-of-stock {
+            color: #a0aec0;
+            border-bottom-color: #a0aec0;
+        }
+
+        /* Список вкусов - уменьшенные блоки */
+        .modal-flavors-list {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .modal-flavor-item {
+            border: 2px solid;
+            border-radius: 10px;
+            padding: 6px 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+            font-family: 'Montserrat', sans-serif;
+            box-shadow: 0 0 15px rgba(62, 123, 255, 0.3);
+        }
+
+        .modal-flavor-item.in-stock {
+            border-color: #3e7bff;
+            background: linear-gradient(145deg, #1e3a5a, #2a4a7a);
+            box-shadow: 0 0 20px rgba(62, 123, 255, 0.5);
+        }
+
+        .modal-flavor-item.in-stock:hover {
+            background: linear-gradient(145deg, #2a4a7a, #3a5a9a);
+            transform: translateX(2px);
+            border-color: #5f9eff;
+            box-shadow: 0 0 25px rgba(95, 158, 255, 0.7);
+        }
+
+        .modal-flavor-item.in-stock.selected {
+            animation: selectedPulse 1.5s ease-in-out infinite;
+            border-width: 2px;
+        }
+
+        @keyframes selectedPulse {
+            0% {
+                box-shadow: 0 0 8px rgba(62, 123, 255, 0.6);
+                border-color: #3e7bff;
+            }
+            25% {
+                box-shadow: 0 0 15px rgba(95, 158, 255, 0.7);
+                border-color: #5f9eff;
+            }
+            50% {
+                box-shadow: 0 0 18px rgba(143, 184, 255, 0.8);
+                border-color: #8fb8ff;
+            }
+            75% {
+                box-shadow: 0 0 15px rgba(95, 158, 255, 0.7);
+                border-color: #5f9eff;
+            }
+            100% {
+                box-shadow: 0 0 8px rgba(62, 123, 255, 0.6);
+                border-color: #3e7bff;
+            }
+        }
+
+        .modal-flavor-item.out-of-stock {
+            border-color: #4a5568;
+            background: rgba(45, 55, 72, 0.3);
+            opacity: 0.8;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        .modal-flavor-item.out-of-stock .flavor-name {
+            color: #a0aec0;
+        }
+
+        .flavor-name {
+            font-size: 0.85rem;
+            color: #e0f0ff;
+            margin-bottom: 4px;
+            font-weight: 600;
+            font-family: 'Montserrat', sans-serif;
+            text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
+        }
+
+        .flavor-details {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        /* Блок характеристик (крепость + объем + теги) */
+        .flavor-attributes {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        /* Блок крепости с цветовой индикацией */
+        .strength-badge {
+            background: linear-gradient(145deg, #2a3a5a, #1a2a4a);
+            border: 1px solid;
+            border-radius: 16px;
+            padding: 3px 8px;
+            display: inline-flex;
+            align-items: center;
+            gap: 3px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #8fb8ff;
+            box-shadow: 0 0 8px rgba(62, 123, 255, 0.4);
+            font-family: 'Montserrat', sans-serif;
+            transition: all 0.3s ease;
+        }
+
+        /* 0 мг - нет свечения */
+        .strength-badge.strength-1 {
+            border-color: #3e7bff;
+            box-shadow: 0 0 5px rgba(62, 123, 255, 0.2);
+        }
+
+        /* 20 мг - маленькое красное свечение */
+        .strength-badge.strength-2 {
+            border-color: #ff6b6b;
+            box-shadow: 0 0 10px rgba(255, 107, 107, 0.4);
+            color: #ffb0b0;
+        }
+
+        .strength-badge.strength-2 .strength-value {
+            color: #ffb0b0;
+        }
+
+        .strength-badge.strength-2 .strength-unit {
+            color: #ffb0b0;
+        }
+
+        /* 50 мг - более красное свечение */
+        .strength-badge.strength-3 {
+            border-color: #ff4d4d;
+            box-shadow: 0 0 15px rgba(255, 77, 77, 0.6);
+            color: #ffc0c0;
+        }
+
+        .strength-badge.strength-3 .strength-value {
+            color: #ffc0c0;
+        }
+
+        .strength-badge.strength-3 .strength-unit {
+            color: #ffc0c0;
+        }
+
+        /* 70 мг - ярко-красное свечение */
+        .strength-badge.strength-4 {
+            border-color: #ff1a1a;
+            box-shadow: 0 0 20px rgba(255, 26, 26, 0.8);
+            color: #ffe0e0;
+        }
+
+        .strength-badge.strength-4 .strength-value {
+            color: #ffe0e0;
+        }
+
+        .strength-badge.strength-4 .strength-unit {
+            color: #ffe0e0;
+        }
+
+        /* Стили для товаров не в наличии - переопределяем все цвета на серый */
+        .modal-flavor-item.out-of-stock .strength-badge,
+        .modal-flavor-item.out-of-stock .strength-badge.strength-1,
+        .modal-flavor-item.out-of-stock .strength-badge.strength-2,
+        .modal-flavor-item.out-of-stock .strength-badge.strength-3,
+        .modal-flavor-item.out-of-stock .strength-badge.strength-4 {
+            border-color: #4a5568;
+            background: linear-gradient(145deg, #2d3748, #1a202c);
+            box-shadow: none;
+            color: #a0aec0;
+        }
+
+        .modal-flavor-item.out-of-stock .strength-badge .strength-value,
+        .modal-flavor-item.out-of-stock .strength-badge .strength-unit,
+        .modal-flavor-item.out-of-stock .strength-badge.strength-2 .strength-value,
+        .modal-flavor-item.out-of-stock .strength-badge.strength-2 .strength-unit,
+        .modal-flavor-item.out-of-stock .strength-badge.strength-3 .strength-value,
+        .modal-flavor-item.out-of-stock .strength-badge.strength-3 .strength-unit,
+        .modal-flavor-item.out-of-stock .strength-badge.strength-4 .strength-value,
+        .modal-flavor-item.out-of-stock .strength-badge.strength-4 .strength-unit {
+            color: #a0aec0 !important;
+        }
+
+        /* Блок объема */
+        .volume-badge {
+            background: linear-gradient(145deg, #2a3a4a, #1a2a3a);
+            border: 1px solid #5f9eff;
+            border-radius: 16px;
+            padding: 3px 8px;
+            display: inline-flex;
+            align-items: center;
+            gap: 3px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #8fb8ff;
+            box-shadow: 0 0 8px rgba(62, 123, 255, 0.4);
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        .volume-value {
+            color: #ffffff;
+            font-weight: 700;
+        }
+
+        .volume-unit {
+            color: #8fb8ff;
+            font-size: 0.65rem;
+            opacity: 0.8;
+        }
+
+        /* Блок ICE */
+        .ice-badge {
+            background: linear-gradient(145deg, #1a4a5a, #0f3a4a);
+            border: 1px solid #5fd0ff;
+            border-radius: 16px;
+            padding: 3px 8px;
+            display: inline-flex;
+            align-items: center;
+            gap: 3px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: #a0e0ff;
+            box-shadow: 0 0 8px rgba(95, 208, 255, 0.5);
+            font-family: 'Montserrat', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Блок SOUR */
+        .sour-badge {
+            background: linear-gradient(145deg, #3a5a2a, #2a4a1a);
+            border: 1px solid #a0ff5f;
+            border-radius: 16px;
+            padding: 3px 8px;
+            display: inline-flex;
+            align-items: center;
+            gap: 3px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: #d0ffa0;
+            box-shadow: 0 0 8px rgba(160, 255, 95, 0.5);
+            font-family: 'Montserrat', sans-serif;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Стили для товаров не в наличии - переопределяем все цвета на серый */
+        .modal-flavor-item.out-of-stock .volume-badge,
+        .modal-flavor-item.out-of-stock .ice-badge,
+        .modal-flavor-item.out-of-stock .sour-badge {
+            border-color: #4a5568;
+            color: #a0aec0;
+            background: linear-gradient(145deg, #2d3748, #1a202c);
+            box-shadow: none;
+        }
+
+        .modal-flavor-item.out-of-stock .volume-value,
+        .modal-flavor-item.out-of-stock .volume-unit {
+            color: #a0aec0;
+        }
+
+        /* Блок выбора количества */
+        .quantity-selector {
+            display: none;
+            align-items: center;
+            gap: 4px;
+            background: rgba(8, 20, 40, 0.8);
+            border: 1px solid #3e7bff;
+            border-radius: 20px;
+            padding: 2px 6px;
+            animation: fadeIn 0.2s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .quantity-selector.show {
+            display: flex;
+        }
+
+        .quantity-btn {
+            background: linear-gradient(145deg, #1a2a4a, #0f1a30);
+            border: 1px solid #3e7bff;
+            color: #8fb8ff;
+            width: 22px;
+            height: 22px;
+            border-radius: 11px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 700;
+            transition: all 0.2s ease;
+        }
+
+        .quantity-btn:hover {
+            background: #3e7bff;
+            color: black;
+        }
+
+        .quantity-input {
+            width: 32px;
+            background: rgba(8, 20, 40, 0.7);
+            border: 1px solid #3e7bff;
+            border-radius: 8px;
+            padding: 2px;
+            text-align: center;
+            color: #8fb8ff;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .quantity-input:focus {
+            outline: none;
+            box-shadow: 0 0 8px #3e7bff;
+        }
+
+        /* Нижняя панель (уменьшенная) */
+        .modal-footer {
+            background: rgba(8, 20, 40, 0.95);
+            backdrop-filter: blur(10px);
+            border-top: 2px solid #3e7bff;
+            padding: 8px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-radius: 0 0 30px 30px;
+            margin-top: 5px;
+        }
+
+        .total-price {
+            display: flex;
+            align-items: baseline;
+            gap: 4px;
+        }
+
+        .price-label {
+            color: #8fb8ff;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        .price-value {
+            color: #2ecc71;
+            font-size: 1.1rem;
+            font-weight: 800;
+            font-family: 'Montserrat', sans-serif;
+            text-shadow: 0 0 8px #2ecc71;
+        }
+
+        .price-currency {
+            color: #8fb8ff;
+            font-size: 0.7rem;
+            font-weight: 600;
+            margin-left: 2px;
+        }
+
+        .modal-order-btn {
+            background: linear-gradient(145deg, #1a3a2a, #0f2a1a);
+            border: 2px solid #2ecc71;
+            color: #2ecc71;
+            padding: 5px 18px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-radius: 22px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Montserrat', sans-serif;
+            box-shadow: 0 0 10px rgba(46, 204, 113, 0.3);
+        }
+
+        .modal-order-btn:hover {
+            background: #2ecc71;
+            color: black;
+            transform: scale(1.03);
+            box-shadow: 0 0 15px #2ecc71;
+        }
+
+        /* Уведомления */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(8, 20, 40, 0.95);
+            border: 2px solid;
+            border-radius: 12px;
+            padding: 12px 20px;
+            color: #fff;
+            font-size: 0.9rem;
+            font-weight: 500;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+            z-index: 2000;
+            max-width: 300px;
+            border-left-width: 4px;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .notification.warning {
+            border-color: #f39c12;
+            background: rgba(243, 156, 18, 0.15);
+            color: #f39c12;
+        }
+
+        .notification.error {
+            border-color: #e74c3c;
+            background: rgba(231, 76, 60, 0.15);
+            color: #e74c3c;
+        }
+
+        .notification.success {
+            border-color: #2ecc71;
+            background: rgba(46, 204, 113, 0.15);
+            color: #2ecc71;
+        }
+
+        .notification-content {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .notification-icon {
+            font-size: 1.2rem;
+        }
+
+        @media (max-width: 400px) {
+            .ship-name { font-size: 2rem; }
+            .product-image { width: 60px; height: 60px; }
+            .modal-footer { flex-direction: column; gap: 8px; }
+            .modal-order-btn { width: 100%; }
+            .modal-product-image { width: 130px; height: 130px; }
+            .flavor-details { flex-wrap: wrap; }
+            .flavor-attributes { width: 100%; justify-content: flex-start; }
+        }
+    </style>
+</head>
+<body>
+    <div class="ship-hud">
+        <div class="hologram-ring"></div>
+        <div class="hologram-ring2"></div>
+
+        <div class="ship-header">
+            <div class="ship-title">
+                <div class="ship-name">VAPEOPT</div>
+                <div class="ship-sub">КАТАЛОГ ЖИДКОСТЕЙ</div>
+            </div>
+            <a href="index.html" class="back-link" title="Назад"></a>
+        </div>
+
+        <div class="products-scroll" id="productsContainer">
+            <!-- Товары будут загружаться сюда -->
+        </div>
+    </div>
+
+    <!-- Уведомления -->
+    <div class="notification" id="notification">
+        <div class="notification-content">
+            <span class="notification-icon" id="notificationIcon">⚡</span>
+            <span id="notificationMessage"></span>
+        </div>
+    </div>
+
+    <!-- Модальное окно товара -->
+    <div class="modal" id="productModal">
+        <div class="modal-content">
+            <button class="modal-close-btn" id="modalCloseBtn">✕</button>
+            
+            <div class="modal-header">
+                <div class="modal-product-name" id="modalProductName"></div>
+                <div class="modal-image-container">
+                    <img src="" alt="" class="modal-product-image" id="modalImage">
+                </div>
+            </div>
+
+            <div class="modal-scroll-area" id="modalScrollArea">
+                <div id="modalFlavorsContainer"></div>
+            </div>
+
+            <div class="modal-footer">
+                <div class="total-price">
+                    <span class="price-label">ЦЕНА ЗА ШТ:</span>
+                    <span class="price-value" id="modalPrice">0</span>
+                    <span class="price-currency">BYN</span>
+                </div>
+                <button class="modal-order-btn" id="modalOrderBtn">ЗАКАЗАТЬ</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Загружаем товары из localStorage
+        let liquids = JSON.parse(localStorage.getItem('vapeopt_liquids')) || [];
+        let currentProductIndex = -1;
+        let selectedFlavorIndex = -1;
+
+        // Функция показа уведомления
+        function showNotification(message, type = 'warning') {
+            const notification = document.getElementById('notification');
+            const icon = document.getElementById('notificationIcon');
+            const messageEl = document.getElementById('notificationMessage');
+            
+            notification.className = 'notification show ' + type;
+            
+            if (type === 'warning') {
+                icon.textContent = '⚠️';
+            } else if (type === 'error') {
+                icon.textContent = '❌';
+            } else {
+                icon.textContent = '✅';
+            }
+            
+            messageEl.textContent = message;
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+
+        // Функция для получения текста крепости
+        function getStrengthText(strength) {
+            switch(strength) {
+                case 1: return '0';
+                case 2: return '20';
+                case 3: return '50';
+                case 4: return '70';
+                default: return '0';
+            }
+        }
+
+        // Функция для получения класса крепости
+        function getStrengthClass(strength) {
+            switch(strength) {
+                case 1: return 'strength-1';
+                case 2: return 'strength-2';
+                case 3: return 'strength-3';
+                case 4: return 'strength-4';
+                default: return 'strength-1';
+            }
+        }
+
+        // Функция для отображения товаров
+        function displayProducts() {
+            const container = document.getElementById('productsContainer');
+            
+            if (liquids.length === 0) {
+                container.innerHTML = '<div class="empty-message">НА ДАННЫЙ МОМЕНТ ТОВАРОВ НЕТ</div>';
+                return;
+            }
+
+            // Разделяем товары на "в наличии" и "нет в наличии"
+            const inStockProducts = liquids.filter(liquid => 
+                liquid.flavors && liquid.flavors.some(f => f.inStock !== false)
+            );
+            
+            const outOfStockProducts = liquids.filter(liquid => 
+                !liquid.flavors || !liquid.flavors.some(f => f.inStock !== false)
+            );
+
+            let html = '';
+
+            // Блок "В наличии"
+            if (inStockProducts.length > 0) {
+                html += '<div class="section-title in-stock">✔ В НАЛИЧИИ</div>';
+                html += '<div class="products-grid">';
+                
+                inStockProducts.forEach((liquid, index) => {
+                    const originalIndex = liquids.findIndex(l => l.name === liquid.name && l.price === liquid.price);
+                    
+                    html += `
+                        <div class="product-card ${liquid.isNew ? 'new-item' : ''}" onclick="openProductModal(${originalIndex})">
+                            <img src="${liquid.image || 'https://via.placeholder.com/80x80/10213f/3e7bff?text=' + encodeURIComponent(liquid.name.substring(0, 3))}" 
+                                 alt="${liquid.name}" 
+                                 class="product-image"
+                                 onerror="this.src='https://via.placeholder.com/80x80/10213f/3e7bff?text=Нет+фото'">
+                            <div class="product-name">${liquid.name}</div>
+                            <div class="product-price">${liquid.price} BYN</div>
+                        </div>
+                    `;
+                });
+                
+                html += '</div>';
+            }
+
+            // Блок "Нет в наличии"
+            if (outOfStockProducts.length > 0) {
+                html += '<div class="section-title out-of-stock">✖ НЕТ В НАЛИЧИИ</div>';
+                html += '<div class="products-grid">';
+                
+                outOfStockProducts.forEach((liquid, index) => {
+                    const originalIndex = liquids.findIndex(l => l.name === liquid.name && l.price === liquid.price);
+                    
+                    html += `
+                        <div class="product-card out-of-stock" onclick="showOutOfStockNotification()">
+                            <img src="${liquid.image || 'https://via.placeholder.com/80x80/4a5568/718096?text=' + encodeURIComponent(liquid.name.substring(0, 3))}" 
+                                 alt="${liquid.name}" 
+                                 class="product-image"
+                                 onerror="this.src='https://via.placeholder.com/80x80/4a5568/718096?text=Нет+фото'">
+                            <div class="product-name">${liquid.name}</div>
+                            <div class="product-price">${liquid.price} BYN</div>
+                        </div>
+                    `;
+                });
+                
+                html += '</div>';
+            }
+
+            container.innerHTML = html;
+        }
+
+        // Функция для уведомления об отсутствии товара
+        window.showOutOfStockNotification = function() {
+            showNotification('Товара нет в наличии', 'error');
+        };
+
+// Функция для обработки выбора вкуса
+window.selectFlavor = function(index, event) {
+    // Останавливаем всплытие события
+    if (event) {
+        event.stopPropagation();
+    }
+    
+    const liquid = liquids[currentProductIndex];
+    if (!liquid || !liquid.flavors[index] || liquid.flavors[index].inStock === false) return;
+    
+    // Если кликнули на тот же самый вкус - отменяем выбор
+    if (selectedFlavorIndex === index) {
+        selectedFlavorIndex = -1;
+    } else {
+        // Иначе выбираем новый вкус
+        selectedFlavorIndex = index;
+    }
+    
+    // Обновляем отображение модального окна
+    openProductModal(currentProductIndex);
+};
+
+        // Функции для работы с количеством
+        window.updateQuantity = function(flavorIndex, change, event) {
+            // Останавливаем всплытие события
+            if (event) {
+                event.stopPropagation();
+            }
+            
+            const liquid = liquids[currentProductIndex];
+            if (!liquid) return;
+            
+            const flavor = liquid.flavors[flavorIndex];
+            if (!flavor) return;
+            
+            flavor.quantity = Math.max(1, (flavor.quantity || 1) + change);
+            
+            const input = document.getElementById(`quantity-${flavorIndex}`);
+            if (input) input.value = flavor.quantity;
+            
+            localStorage.setItem('vapeopt_liquids', JSON.stringify(liquids));
+        };
+
+        window.setQuantity = function(flavorIndex, value, event) {
+            // Останавливаем всплытие события
+            if (event) {
+                event.stopPropagation();
+            }
+            
+            const liquid = liquids[currentProductIndex];
+            if (!liquid) return;
+            
+            const flavor = liquid.flavors[flavorIndex];
+            if (!flavor) return;
+            
+            const num = parseInt(value) || 1;
+            flavor.quantity = Math.max(1, num);
+            
+            localStorage.setItem('vapeopt_liquids', JSON.stringify(liquids));
+        };
+
+        // Открытие модального окна с деталями товара
+        window.openProductModal = function(index) {
+            const liquid = liquids[index];
+            currentProductIndex = index;
+            
+            // Сбрасываем все количества на 1 при открытии
+            if (liquid.flavors) {
+                liquid.flavors.forEach(flavor => {
+                    flavor.quantity = 1;
+                });
+                localStorage.setItem('vapeopt_liquids', JSON.stringify(liquids));
+            }
+            
+            const modal = document.getElementById('productModal');
+            const modalImage = document.getElementById('modalImage');
+            const modalPrice = document.getElementById('modalPrice');
+            const modalProductName = document.getElementById('modalProductName');
+            const modalFlavorsContainer = document.getElementById('modalFlavorsContainer');
+
+            modalImage.src = liquid.image || 'https://via.placeholder.com/150x150/10213f/3e7bff?text=' + encodeURIComponent(liquid.name.substring(0, 3));
+            modalImage.alt = liquid.name;
+            modalPrice.textContent = liquid.price;
+            modalProductName.textContent = liquid.name;
+            
+            // Разделяем вкусы на "в наличии" и "нет в наличии"
+            const inStockFlavors = liquid.flavors ? liquid.flavors.filter(f => f.inStock !== false) : [];
+            const outOfStockFlavors = liquid.flavors ? liquid.flavors.filter(f => f.inStock === false) : [];
+            
+            let flavorsHtml = '';
+            
+            // Блок "В наличии"
+            if (inStockFlavors.length > 0) {
+                flavorsHtml += `
+                    <div class="stock-section">
+                        <div class="stock-section-title in-stock">✔ В НАЛИЧИИ</div>
+                        <div class="modal-flavors-list">
+                `;
+                
+                inStockFlavors.forEach((flavor, fIndex) => {
+                    const originalIndex = liquid.flavors.findIndex(f => f.name === flavor.name && f.strength === flavor.strength);
+                    const strengthValue = getStrengthText(flavor.strength || 1);
+                    const strengthClass = getStrengthClass(flavor.strength || 1);
+                    const isSelected = selectedFlavorIndex === originalIndex;
+                    const volume = flavor.volume || 30;
+                    const tag = flavor.tag || '';
+                    
+                    flavorsHtml += `
+                        <div class="modal-flavor-item in-stock ${isSelected ? 'selected' : ''}" onclick="selectFlavor(${originalIndex}, event)">
+                            <div class="flavor-name">${flavor.name}</div>
+                            <div class="flavor-details">
+                                <div class="flavor-attributes">
+                                    <div class="strength-badge ${strengthClass}">
+                                        <span class="strength-value">${strengthValue}</span>
+                                        <span class="strength-unit">мг</span>
+                                    </div>
+                                    <div class="volume-badge">
+                                        <span class="volume-value">${volume}</span>
+                                        <span class="volume-unit">мл</span>
+                                    </div>
+                                    ${tag === 'ice' ? '<div class="ice-badge">ICE</div>' : ''}
+                                    ${tag === 'sour' ? '<div class="sour-badge">SOUR</div>' : ''}
+                                </div>
+                                <div class="quantity-selector ${isSelected ? 'show' : ''}" id="selector-${originalIndex}">
+                                    <button class="quantity-btn" onclick="updateQuantity(${originalIndex}, -1, event)">−</button>
+                                    <input type="text" class="quantity-input" id="quantity-${originalIndex}" value="${flavor.quantity || 1}" 
+                                           onchange="setQuantity(${originalIndex}, this.value, event)" 
+                                           onclick="event.stopPropagation()">
+                                    <button class="quantity-btn" onclick="updateQuantity(${originalIndex}, 1, event)">+</button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                flavorsHtml += `</div></div>`;
+            }
+            
+            // Блок "Нет в наличии"
+            if (outOfStockFlavors.length > 0) {
+                flavorsHtml += `
+                    <div class="stock-section">
+                        <div class="stock-section-title out-of-stock">✖ НЕТ В НАЛИЧИИ</div>
+                        <div class="modal-flavors-list">
+                `;
+                
+                outOfStockFlavors.forEach((flavor) => {
+                    const strengthValue = getStrengthText(flavor.strength || 1);
+                    const volume = flavor.volume || 30;
+                    const tag = flavor.tag || '';
+                    
+                    flavorsHtml += `
+                        <div class="modal-flavor-item out-of-stock">
+                            <div class="flavor-name">${flavor.name}</div>
+                            <div class="flavor-details">
+                                <div class="flavor-attributes">
+                                    <div class="strength-badge">
+                                        <span class="strength-value">${strengthValue}</span>
+                                        <span class="strength-unit">мг</span>
+                                    </div>
+                                    <div class="volume-badge">
+                                        <span class="volume-value">${volume}</span>
+                                        <span class="volume-unit">мл</span>
+                                    </div>
+                                    ${tag === 'ice' ? '<div class="ice-badge">ICE</div>' : ''}
+                                    ${tag === 'sour' ? '<div class="sour-badge">SOUR</div>' : ''}
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                flavorsHtml += `</div></div>`;
+            }
+            
+            modalFlavorsContainer.innerHTML = flavorsHtml;
+            modal.classList.add('show');
+        };
+
+        // Добавление в корзину
+        document.getElementById('modalOrderBtn').addEventListener('click', function() {
+            if (selectedFlavorIndex === -1) {
+                showNotification('Выберите вкус', 'warning');
+                return;
+            }
+            
+            const liquid = liquids[currentProductIndex];
+            const flavor = liquid.flavors[selectedFlavorIndex];
+            
+            if (!flavor || flavor.quantity <= 0) {
+                showNotification('Укажите количество', 'warning');
+                return;
+            }
+
+            // Получаем текущую корзину
+            let cart = JSON.parse(localStorage.getItem('vapeopt_cart')) || [];
+            
+            // Формируем элемент корзины
+            const cartItem = {
+                id: Date.now() + Math.random(),
+                productId: currentProductIndex,
+                flavorIndex: selectedFlavorIndex,
+                name: liquid.name,
+                flavorName: flavor.name,
+                strength: flavor.strength,
+                volume: flavor.volume,
+                tag: flavor.tag,
+                price: liquid.price,
+                quantity: flavor.quantity,
+                image: liquid.image
+            };
+
+            cart.push(cartItem);
+            localStorage.setItem('vapeopt_cart', JSON.stringify(cart));
+
+            // Сбрасываем количество на 1 после добавления в корзину
+            flavor.quantity = 1;
+            localStorage.setItem('vapeopt_liquids', JSON.stringify(liquids));
+
+            // Показываем уведомление об успехе
+            showNotification('Товар добавлен в корзину', 'success');
+
+            // Сбрасываем выбранный вкус
+            selectedFlavorIndex = -1;
+
+            // Обновляем отображение
+            if (currentProductIndex !== -1) {
+                openProductModal(currentProductIndex);
+            }
+
+            // Оповещаем другие страницы об изменениях
+            window.dispatchEvent(new StorageEvent('storage', {
+                key: 'vapeopt_cart',
+                newValue: JSON.stringify(cart)
+            }));
+        });
+
+        // Закрытие модального окна
+        function closeModal() {
+            document.getElementById('productModal').classList.remove('show');
+            // Сбрасываем все количества на 1 при закрытии
+            if (currentProductIndex !== -1) {
+                const liquid = liquids[currentProductIndex];
+                if (liquid && liquid.flavors) {
+                    liquid.flavors.forEach(flavor => {
+                        flavor.quantity = 1;
+                    });
+                    localStorage.setItem('vapeopt_liquids', JSON.stringify(liquids));
+                }
+            }
+            selectedFlavorIndex = -1;
+        }
+
+        document.getElementById('modalCloseBtn').addEventListener('click', closeModal);
+        
+        document.getElementById('productModal').addEventListener('click', (e) => {
+            if (e.target === document.getElementById('productModal')) {
+                closeModal();
+            }
+        });
+
+        // Инициализация
+        displayProducts();
+
+        // Слушаем изменения из других страниц
+        window.addEventListener('storage', function(e) {
+            if (e.key === 'vapeopt_liquids') {
+                liquids = JSON.parse(e.newValue || '[]');
+                displayProducts();
+            }
+        });
+    </script>
+</body>
+</html>

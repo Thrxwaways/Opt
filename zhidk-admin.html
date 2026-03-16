@@ -1,0 +1,1249 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>VAPEOPT | АДМИН ЖИДКОСТЕЙ</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Orbitron', 'Arial', sans-serif;
+        }
+
+/* Убирает синий квадрат/подсветку при нажатии на всех элементах */
+* {
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
+}
+
+/* Для старых браузеров и дополнительная защита */
+a:focus,
+button:focus,
+div:focus,
+.product-card:focus,
+.cargo-module:focus,
+.modal-item:focus,
+.quantity-btn:focus,
+.back-link:focus,
+.admin-ship:focus,
+.cart-icon:focus {
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+/* Убираем стандартную обводку фокуса во всех браузерах */
+:focus {
+    outline: none !important;
+}
+
+/* Для Firefox */
+::-moz-focus-inner {
+    border: 0;
+}
+
+/* Для IE/Edge */
+::selection {
+    background: transparent;
+}
+
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap');
+
+        body {
+            background: #03050f;
+            background-image: radial-gradient(ellipse at 50% 30%, #1b2b55 0%, #020412 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px;
+        }
+
+        .ship-hud {
+            width: 100%;
+            max-width: 500px;
+            height: 95vh;
+            max-height: 900px;
+            background: rgba(2, 10, 22, 0.8);
+            backdrop-filter: blur(12px);
+            border: 3px solid #3e7bff;
+            border-radius: 50px;
+            box-shadow: 0 0 60px #1e4fcf, 0 0 30px #3e7bff inset;
+            padding: 30px 22px;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .ship-hud::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 200%;
+            height: 10px;
+            background: linear-gradient(90deg, transparent, #3e7bff, transparent);
+            animation: scanLine 4s linear infinite;
+            opacity: 0.5;
+        }
+
+        @keyframes scanLine {
+            0% { top: 0; }
+            100% { top: 100%; }
+        }
+
+        .hologram-ring {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 400px;
+            height: 400px;
+            border: 2px dashed #3e7bff30;
+            border-radius: 50%;
+            pointer-events: none;
+            animation: rotateRing 20s linear infinite;
+        }
+
+        .hologram-ring2 {
+            width: 300px;
+            height: 300px;
+            border: 1px solid #3e7bff20;
+            border-radius: 50%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            animation: rotateRingReverse 15s linear infinite;
+        }
+
+        @keyframes rotateRing {
+            from { transform: translate(-50%, -50%) rotate(0deg); }
+            to { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+
+        @keyframes rotateRingReverse {
+            from { transform: translate(-50%, -50%) rotate(0deg); }
+            to { transform: translate(-50%, -50%) rotate(-360deg); }
+        }
+
+        .ship-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .ship-title {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .ship-name {
+            font-size: 2.2rem;
+            font-weight: 900;
+            color: #8fb8ff;
+            text-shadow: 0 0 20px #3e7bff, 0 0 40px #1e4fcf;
+            letter-spacing: 3px;
+            line-height: 1;
+        }
+
+        .ship-sub {
+            font-size: 0.7rem;
+            color: #afc9ff;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+        }
+
+        .back-link {
+            background: #10213f;
+            border: 2px solid #3e7bff;
+            color: #8fb8ff;
+            width: 45px;
+            height: 45px;
+            border-radius: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            text-decoration: none;
+            box-shadow: 0 0 20px #3e7bff;
+            transition: 0.2s;
+        }
+
+        .back-link:hover {
+            background: #3e7bff;
+            color: black;
+            transform: scale(1.1);
+        }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            flex: 1;
+            align-content: start;
+            padding-top: 10px;
+            position: relative;
+            z-index: 2;
+            overflow-y: auto;
+            padding-bottom: 10px;
+        }
+
+        .product-card {
+            background: rgba(8, 20, 40, 0.7);
+            backdrop-filter: blur(5px);
+            border: 3px solid #3e7bff;
+            border-radius: 25px;
+            padding: 12px 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            transition: 0.3s;
+            position: relative;
+        }
+
+        .product-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 0 30px #3e7bff;
+        }
+
+        .product-card.add-card {
+            border-style: dashed;
+            background: rgba(8, 20, 40, 0.3);
+        }
+
+        .add-icon {
+            font-size: 3rem;
+            color: #3e7bff;
+            margin-bottom: 10px;
+        }
+
+        .add-text {
+            color: #8fb8ff;
+            font-size: 1rem;
+            text-transform: uppercase;
+        }
+
+        .product-image {
+            width: 70px;
+            height: 70px;
+            border-radius: 15px;
+            margin-bottom: 8px;
+            object-fit: cover;
+            border: 2px solid #3e7bff;
+        }
+
+        .product-name {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: #cfdfff;
+            text-align: center;
+            margin-bottom: 5px;
+        }
+
+        .product-price {
+            font-size: 0.8rem;
+            color: #2ecc71;
+            border: 1px solid #2ecc71;
+            padding: 2px 8px;
+            border-radius: 12px;
+        }
+
+        .new-badge {
+            position: absolute;
+            top: 5px;
+            left: 5px;
+            background: #2ecc71;
+            color: black;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 0.6rem;
+            font-weight: 700;
+            box-shadow: 0 0 10px #2ecc71;
+        }
+
+        .out-of-stock-badge {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: #e74c3c;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 0.6rem;
+            box-shadow: 0 0 10px #e74c3c;
+        }
+
+        /* Модальное окно */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(2, 10, 22, 0.95);
+            backdrop-filter: blur(10px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            width: 90%;
+            max-width: 450px;
+            max-height: 85vh;
+            background: rgba(8, 20, 40, 0.9);
+            border: 3px solid #3e7bff;
+            border-radius: 30px;
+            padding: 25px;
+            box-shadow: 0 0 50px #3e7bff;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #3e7bff;
+            padding-bottom: 10px;
+        }
+
+        .modal-header h2 {
+            color: #8fb8ff;
+            font-size: 1.3rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .modal-header-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .close-modal {
+            background: none;
+            border: 2px solid #e74c3c;
+            color: #e74c3c;
+            width: 35px;
+            height: 35px;
+            border-radius: 18px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .close-modal:hover {
+            background: #e74c3c;
+            color: black;
+        }
+
+        .delete-btn {
+            background: none;
+            border: 2px solid #e74c3c;
+            color: #e74c3c;
+            padding: 5px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: 0.2s;
+        }
+
+        .delete-btn:hover {
+            background: #e74c3c;
+            color: black;
+        }
+
+        /* Стили для формы */
+        .form-section {
+            margin-bottom: 25px;
+            border: 1px solid #3e7bff40;
+            border-radius: 20px;
+            padding: 15px;
+        }
+
+        .form-section-title {
+            color: #8fb8ff;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 15px;
+            border-left: 3px solid #3e7bff;
+            padding-left: 10px;
+        }
+
+        /* Блок загрузки фото */
+        .image-upload-area {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .image-preview-container {
+            width: 150px;
+            height: 150px;
+            border: 3px solid #3e7bff;
+            border-radius: 20px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 0 20px #3e7bff;
+            background: rgba(8, 20, 40, 0.5);
+        }
+
+        .image-preview {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .image-preview.placeholder {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #3e7bff;
+            font-size: 3rem;
+            background: rgba(8, 20, 40, 0.5);
+        }
+
+        .custom-file-upload {
+            position: relative;
+            width: 100%;
+        }
+
+        .file-input {
+            position: absolute;
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .file-label {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            background: #10213f;
+            border: 2px solid #3e7bff;
+            color: #8fb8ff;
+            padding: 12px 20px;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: 0.2s;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .file-label:hover {
+            background: #3e7bff;
+            color: black;
+            box-shadow: 0 0 20px #3e7bff;
+        }
+
+        .file-name {
+            color: #8fb8ff;
+            font-size: 0.8rem;
+            text-align: center;
+            margin-top: 5px;
+        }
+
+        /* Поля ввода */
+        .input-group {
+            margin-bottom: 15px;
+        }
+
+        .input-label {
+            color: #afc9ff;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        .hud-input {
+            width: 100%;
+            background: rgba(8, 20, 40, 0.7);
+            border: 2px solid #3e7bff;
+            border-radius: 30px;
+            padding: 12px 20px;
+            color: #8fb8ff;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.9rem;
+            outline: none;
+            transition: 0.2s;
+        }
+
+        .hud-input:focus {
+            border-color: #8fb8ff;
+            box-shadow: 0 0 20px #3e7bff;
+            background: rgba(12, 30, 60, 0.8);
+        }
+
+        .hud-input::placeholder {
+            color: #3e5a80;
+        }
+
+        /* Блок вкусов */
+        .flavors-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .flavor-row {
+            background: rgba(8, 20, 40, 0.5);
+            border: 2px solid #3e7bff;
+            border-radius: 20px;
+            padding: 15px;
+            position: relative;
+        }
+
+        .flavor-row-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .flavor-row-title {
+            color: #8fb8ff;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+        }
+
+        .remove-flavor {
+            background: none;
+            border: 2px solid #e74c3c;
+            color: #e74c3c;
+            width: 30px;
+            height: 30px;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .remove-flavor:hover {
+            background: #e74c3c;
+            color: black;
+        }
+
+        .flavor-inputs {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .flavor-name-input {
+            background: rgba(8, 20, 40, 0.7);
+            border: 2px solid #3e7bff;
+            border-radius: 20px;
+            padding: 10px 15px;
+            color: #8fb8ff;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.8rem;
+            outline: none;
+        }
+
+        .flavor-name-input::placeholder {
+            color: #3e5a80;
+        }
+
+        .strength-select {
+            background: rgba(8, 20, 40, 0.7);
+            border: 2px solid #3e7bff;
+            border-radius: 20px;
+            padding: 10px 15px;
+            color: #8fb8ff;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.8rem;
+            outline: none;
+            cursor: pointer;
+        }
+
+        .strength-select option {
+            background: #10213f;
+            color: #8fb8ff;
+        }
+
+        /* Новые поля для объема и тегов */
+        .flavor-extras {
+            display: flex;
+            gap: 10px;
+            margin: 10px 0;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .volume-input {
+            width: 80px;
+            background: rgba(8, 20, 40, 0.7);
+            border: 2px solid #3e7bff;
+            border-radius: 15px;
+            padding: 8px 12px;
+            color: #8fb8ff;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.8rem;
+            outline: none;
+        }
+
+        .volume-input:focus {
+            border-color: #8fb8ff;
+            box-shadow: 0 0 20px #3e7bff;
+        }
+
+        .volume-input::placeholder {
+            color: #3e5a80;
+        }
+
+        .tag-selector {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .tag-checkbox {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+
+        .tag-checkbox input[type="checkbox"] {
+            display: none;
+        }
+
+        .tag-custom {
+            width: 22px;
+            height: 22px;
+            border: 2px solid;
+            border-radius: 6px;
+            display: inline-block;
+            position: relative;
+            transition: all 0.2s ease;
+        }
+
+        .ice-tag .tag-custom {
+            border-color: #5fd0ff;
+        }
+
+        .sour-tag .tag-custom {
+            border-color: #a0ff5f;
+        }
+
+        .tag-checkbox input[type="checkbox"]:checked + .tag-custom {
+            background: currentColor;
+        }
+
+        .ice-tag input[type="checkbox"]:checked + .tag-custom {
+            background: #5fd0ff;
+            box-shadow: 0 0 15px #5fd0ff;
+        }
+
+        .sour-tag input[type="checkbox"]:checked + .tag-custom {
+            background: #a0ff5f;
+            box-shadow: 0 0 15px #a0ff5f;
+        }
+
+        .tag-checkbox input[type="checkbox"]:checked + .tag-custom::after {
+            content: '✓';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: black;
+            font-size: 0.9rem;
+            font-weight: bold;
+        }
+
+        .tag-label {
+            color: #8fb8ff;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+
+        .ice-tag .tag-label {
+            color: #5fd0ff;
+            text-shadow: 0 0 8px #5fd0ff;
+        }
+
+        .sour-tag .tag-label {
+            color: #a0ff5f;
+            text-shadow: 0 0 8px #a0ff5f;
+        }
+
+        /* Чекбокс наличия для вкуса */
+        .flavor-stock-checkbox {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 10px;
+            padding: 8px 12px;
+            background: rgba(8, 20, 40, 0.5);
+            border: 2px solid #3e7bff;
+            border-radius: 15px;
+            cursor: pointer;
+        }
+
+        .flavor-stock-checkbox input[type="checkbox"] {
+            display: none;
+        }
+
+        .flavor-stock-checkbox .checkbox-custom {
+            width: 20px;
+            height: 20px;
+            border: 2px solid #3e7bff;
+            border-radius: 5px;
+            display: inline-block;
+            position: relative;
+            transition: 0.2s;
+        }
+
+        .flavor-stock-checkbox input[type="checkbox"]:checked + .checkbox-custom {
+            background: #2ecc71;
+            border-color: #2ecc71;
+        }
+
+        .flavor-stock-checkbox input[type="checkbox"]:checked + .checkbox-custom::after {
+            content: '✓';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: black;
+            font-size: 0.8rem;
+        }
+
+        .flavor-stock-checkbox .checkbox-label {
+            color: #8fb8ff;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .add-flavor-btn {
+            width: 100%;
+            background: #10213f;
+            border: 2px dashed #3e7bff;
+            color: #8fb8ff;
+            padding: 12px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .add-flavor-btn:hover {
+            background: #3e7bff20;
+            border-style: solid;
+        }
+
+        /* Кастомные чекбоксы для новинки и наличия */
+        .checkbox-group {
+            display: flex;
+            gap: 30px;
+            margin: 20px 0;
+            padding: 15px;
+            background: rgba(8, 20, 40, 0.5);
+            border: 2px solid #3e7bff;
+            border-radius: 30px;
+        }
+
+        .hud-checkbox {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+        }
+
+        .hud-checkbox input[type="checkbox"] {
+            display: none;
+        }
+
+        .checkbox-custom {
+            width: 25px;
+            height: 25px;
+            border: 2px solid #3e7bff;
+            border-radius: 8px;
+            display: inline-block;
+            position: relative;
+            transition: 0.2s;
+        }
+
+        .hud-checkbox input[type="checkbox"]:checked + .checkbox-custom {
+            background: #2ecc71;
+            border-color: #2ecc71;
+        }
+
+        .hud-checkbox input[type="checkbox"]:checked + .checkbox-custom::after {
+            content: '✓';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: black;
+            font-size: 1rem;
+            font-weight: bold;
+        }
+
+        .checkbox-label {
+            color: #8fb8ff;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Кнопка сохранения */
+        .save-btn {
+            width: 100%;
+            background: #10213f;
+            border: 3px solid #2ecc71;
+            color: #2ecc71;
+            padding: 15px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: 0.3s;
+            margin-top: 20px;
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        .save-btn:hover {
+            background: #2ecc71;
+            color: black;
+            box-shadow: 0 0 30px #2ecc71;
+        }
+
+        @media (max-width: 400px) {
+            .ship-name { font-size: 2rem; }
+            .modal-content { padding: 20px; }
+            .flavor-inputs { grid-template-columns: 1fr; }
+            .flavor-extras { flex-direction: column; align-items: flex-start; }
+        }
+    </style>
+</head>
+<body>
+    <div class="ship-hud">
+        <div class="hologram-ring"></div>
+        <div class="hologram-ring2"></div>
+
+        <div class="ship-header">
+            <div class="ship-title">
+                <div class="ship-name">VAPEOPT</div>
+                <div class="ship-sub">АДМИН ЖИДКОСТЕЙ</div>
+            </div>
+            <a href="admin-panel.html" class="back-link" title="Назад">←</a>
+        </div>
+
+        <div class="products-grid" id="productsGrid">
+            <!-- Карточки товаров будут добавляться динамически -->
+        </div>
+    </div>
+
+    <!-- Модальное окно добавления/редактирования -->
+    <div class="modal" id="productModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">Добавление товара</h2>
+                <div class="modal-header-buttons">
+                    <button class="delete-btn" id="deleteBtn" style="display: none;">Удалить</button>
+                    <button class="close-modal" id="closeModal">✕</button>
+                </div>
+            </div>
+
+            <!-- Блок фото -->
+            <div class="form-section">
+                <div class="form-section-title">Фото товара</div>
+                <div class="image-upload-area">
+                    <div class="image-preview-container">
+                        <img src="" alt="Preview" class="image-preview" id="imagePreview">
+                    </div>
+                    
+                    <div class="custom-file-upload">
+                        <input type="file" id="imageInput" accept="image/*" class="file-input">
+                        <label for="imageInput" class="file-label">
+                            <span>📁</span> Выбрать файл
+                        </label>
+                        <div class="file-name" id="fileName">Файл не выбран</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Название товара -->
+            <div class="form-section">
+                <div class="form-section-title">Название товара</div>
+                <div class="input-group">
+                    <input type="text" id="productName" class="hud-input" placeholder="Например: Fruit Monster">
+                </div>
+            </div>
+
+            <!-- Вкусы -->
+            <div class="form-section">
+                <div class="form-section-title">Вкусы (с крепостью, объемом и тегами)</div>
+                <div class="flavors-container" id="flavorsContainer"></div>
+                <button class="add-flavor-btn" id="addFlavorBtn">
+                    <span>+</span> Добавить вкус
+                </button>
+            </div>
+
+            <!-- Цена -->
+            <div class="form-section">
+                <div class="form-section-title">Цена (BYN)</div>
+                <div class="input-group">
+                    <input type="number" id="productPrice" class="hud-input" placeholder="10" step="0.01">
+                </div>
+            </div>
+
+            <!-- Чекбоксы новинка и наличие -->
+            <div class="checkbox-group">
+                <label class="hud-checkbox">
+                    <input type="checkbox" id="isNew">
+                    <span class="checkbox-custom"></span>
+                    <span class="checkbox-label">Новинка</span>
+                </label>
+                <label class="hud-checkbox">
+                    <input type="checkbox" id="inStock" checked>
+                    <span class="checkbox-custom"></span>
+                    <span class="checkbox-label">В наличии</span>
+                </label>
+            </div>
+
+            <!-- Кнопка сохранения -->
+            <button class="save-btn" id="saveBtn">Сохранить</button>
+        </div>
+    </div>
+
+    <script>
+        let liquids = JSON.parse(localStorage.getItem('vapeopt_liquids')) || [];
+        let editingIndex = -1;
+
+        // Функция отображения товаров
+        function displayProducts() {
+            const grid = document.getElementById('productsGrid');
+            grid.innerHTML = '';
+
+            // Карточка добавления
+            const addCard = document.createElement('div');
+            addCard.className = 'product-card add-card';
+            addCard.innerHTML = `
+                <div class="add-icon">+</div>
+                <div class="add-text">ДОБАВИТЬ ТОВАР</div>
+            `;
+            addCard.onclick = () => openModal('add');
+            grid.appendChild(addCard);
+
+            // Карточки товаров
+            liquids.forEach((liquid, index) => {
+                const card = document.createElement('div');
+                card.className = 'product-card';
+                
+                const hasStock = liquid.flavors ? liquid.flavors.some(f => f.inStock) : true;
+                
+                card.innerHTML = `
+                    <img src="${liquid.image || 'https://via.placeholder.com/70x70/10213f/3e7bff?text=' + encodeURIComponent(liquid.name.substring(0, 3))}" 
+                         class="product-image"
+                         onerror="this.src='https://via.placeholder.com/70x70/10213f/3e7bff?text=Нет+фото'">
+                    <div class="product-name">${liquid.name}</div>
+                    <div class="product-price">${liquid.price} BYN</div>
+                    ${liquid.isNew ? '<div class="new-badge">NEW</div>' : ''}
+                    ${!hasStock ? '<div class="out-of-stock-badge">НЕТ</div>' : ''}
+                `;
+
+                card.onclick = () => openModal('edit', index);
+                grid.appendChild(card);
+            });
+        }
+
+        // Открытие модального окна
+        function openModal(mode, index = -1) {
+            const modal = document.getElementById('productModal');
+            const modalTitle = document.getElementById('modalTitle');
+            const deleteBtn = document.getElementById('deleteBtn');
+            const productName = document.getElementById('productName');
+            const productPrice = document.getElementById('productPrice');
+            const isNew = document.getElementById('isNew');
+            const inStock = document.getElementById('inStock');
+            const imagePreview = document.getElementById('imagePreview');
+            const fileName = document.getElementById('fileName');
+            const flavorsContainer = document.getElementById('flavorsContainer');
+
+            editingIndex = mode === 'edit' ? index : -1;
+
+            if (mode === 'edit' && index >= 0) {
+                const liquid = liquids[index];
+                modalTitle.textContent = 'Редактирование товара';
+                deleteBtn.style.display = 'inline-block';
+                productName.value = liquid.name || '';
+                productPrice.value = liquid.price || '';
+                isNew.checked = liquid.isNew || false;
+                inStock.checked = liquid.inStock !== false;
+                
+                if (liquid.image) {
+                    imagePreview.src = liquid.image;
+                    imagePreview.classList.remove('placeholder');
+                    fileName.textContent = 'Фото загружено';
+                } else {
+                    imagePreview.src = '';
+                    imagePreview.classList.add('placeholder');
+                    fileName.textContent = 'Файл не выбран';
+                }
+
+                // Загружаем вкусы
+                flavorsContainer.innerHTML = '';
+                if (liquid.flavors && liquid.flavors.length > 0) {
+                    liquid.flavors.forEach(flavor => {
+                        addFlavorRow(flavor.name, flavor.strength || 1, flavor.volume || 30, flavor.tag || '', flavor.inStock !== false);
+                    });
+                } else {
+                    addFlavorRow();
+                }
+            } else {
+                modalTitle.textContent = 'Добавление товара';
+                deleteBtn.style.display = 'none';
+                productName.value = '';
+                productPrice.value = '';
+                isNew.checked = false;
+                inStock.checked = true;
+                imagePreview.src = '';
+                imagePreview.classList.add('placeholder');
+                fileName.textContent = 'Файл не выбран';
+                flavorsContainer.innerHTML = '';
+                addFlavorRow();
+            }
+
+            modal.classList.add('show');
+        }
+
+        // Добавление строки вкуса
+        function addFlavorRow(name = '', strength = 1, volume = 30, tag = '', flavorInStock = true) {
+            const container = document.getElementById('flavorsContainer');
+            const row = document.createElement('div');
+            row.className = 'flavor-row';
+            
+            row.innerHTML = `
+                <div class="flavor-row-header">
+                    <span class="flavor-row-title">Вкус</span>
+                    <button class="remove-flavor" onclick="this.closest('.flavor-row').remove()">✕</button>
+                </div>
+                <div class="flavor-inputs">
+                    <input type="text" class="flavor-name-input" placeholder="Название вкуса" value="${name}">
+                    <select class="strength-select">
+                        <option value="1" ${strength == 1 ? 'selected' : ''}>💧 0 mg</option>
+                        <option value="2" ${strength == 2 ? 'selected' : ''}>💧💧 20 mg</option>
+                        <option value="3" ${strength == 3 ? 'selected' : ''}>💧💧💧 50 mg</option>
+                        <option value="4" ${strength == 4 ? 'selected' : ''}>💧💧💧💧 70 mg</option>
+                    </select>
+                </div>
+                <div class="flavor-extras">
+                    <input type="number" class="volume-input" placeholder="Объем" value="${volume}" min="0" step="1">
+                    <div class="tag-selector">
+                        <label class="tag-checkbox ice-tag">
+                            <input type="checkbox" class="tag-ice" value="ice" ${tag === 'ice' ? 'checked' : ''}>
+                            <span class="tag-custom"></span>
+                            <span class="tag-label">ICE</span>
+                        </label>
+                        <label class="tag-checkbox sour-tag">
+                            <input type="checkbox" class="tag-sour" value="sour" ${tag === 'sour' ? 'checked' : ''}>
+                            <span class="tag-custom"></span>
+                            <span class="tag-label">SOUR</span>
+                        </label>
+                    </div>
+                </div>
+                <label class="flavor-stock-checkbox">
+                    <input type="checkbox" class="flavor-instock" ${flavorInStock ? 'checked' : ''}>
+                    <span class="checkbox-custom"></span>
+                    <span class="checkbox-label">В наличии</span>
+                </label>
+            `;
+            
+            container.appendChild(row);
+        }
+
+        // Загрузка изображения
+        document.getElementById('imageInput').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            const fileName = document.getElementById('fileName');
+            const imagePreview = document.getElementById('imagePreview');
+            
+            if (file) {
+                fileName.textContent = file.name;
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    imagePreview.src = e.target.result;
+                    imagePreview.classList.remove('placeholder');
+                };
+                reader.readAsDataURL(file);
+            } else {
+                fileName.textContent = 'Файл не выбран';
+                imagePreview.src = '';
+                imagePreview.classList.add('placeholder');
+            }
+        });
+
+        // Сохранение товара
+        document.getElementById('saveBtn').addEventListener('click', function() {
+            const productName = document.getElementById('productName').value.trim();
+            const productPrice = parseFloat(document.getElementById('productPrice').value);
+            const isNew = document.getElementById('isNew').checked;
+            const inStock = document.getElementById('inStock').checked;
+            const imagePreview = document.getElementById('imagePreview').src;
+            
+            if (!productName) {
+                alert('Введите название товара');
+                return;
+            }
+            
+            if (!productPrice || productPrice <= 0) {
+                alert('Введите корректную цену');
+                return;
+            }
+
+            // Собираем вкусы
+            const flavorRows = document.querySelectorAll('#flavorsContainer .flavor-row');
+            const flavors = [];
+            let hasValidFlavor = false;
+
+            flavorRows.forEach((row, index) => {
+                const nameInput = row.querySelector('.flavor-name-input');
+                const strengthSelect = row.querySelector('.strength-select');
+                const volumeInput = row.querySelector('.volume-input');
+                const iceCheckbox = row.querySelector('.tag-ice');
+                const sourCheckbox = row.querySelector('.tag-sour');
+                const inStockCheckbox = row.querySelector('.flavor-instock');
+                
+                const name = nameInput ? nameInput.value.trim() : '';
+                const strength = strengthSelect ? parseInt(strengthSelect.value) : 1;
+                const volume = volumeInput ? parseInt(volumeInput.value) || 30 : 30;
+                const isIce = iceCheckbox ? iceCheckbox.checked : false;
+                const isSour = sourCheckbox ? sourCheckbox.checked : false;
+                const flavorInStock = inStockCheckbox ? inStockCheckbox.checked : true;
+                
+                // Определяем тег (ICE или SOUR, приоритет если оба выбраны - берем первый)
+                let tag = '';
+                if (isIce) tag = 'ice';
+                else if (isSour) tag = 'sour';
+                
+                if (name) {
+                    hasValidFlavor = true;
+                    flavors.push({
+                        name: name,
+                        strength: strength,
+                        volume: volume,
+                        tag: tag,
+                        inStock: flavorInStock,
+                        quantity: 0
+                    });
+                }
+            });
+
+            if (!hasValidFlavor) {
+                alert('Добавьте хотя бы один вкус');
+                return;
+            }
+
+            const liquid = {
+                name: productName,
+                price: productPrice,
+                isNew: isNew,
+                inStock: inStock,
+                image: imagePreview && !imagePreview.includes('placeholder') ? imagePreview : '',
+                flavors: flavors
+            };
+
+            if (editingIndex >= 0) {
+                liquids[editingIndex] = liquid;
+            } else {
+                liquids.push(liquid);
+            }
+
+            localStorage.setItem('vapeopt_liquids', JSON.stringify(liquids));
+            
+            // Оповещаем другие страницы об изменениях
+            window.dispatchEvent(new StorageEvent('storage', {
+                key: 'vapeopt_liquids',
+                newValue: JSON.stringify(liquids)
+            }));
+            
+            document.getElementById('productModal').classList.remove('show');
+            displayProducts();
+        });
+
+        // Удаление товара
+        document.getElementById('deleteBtn').addEventListener('click', function() {
+            if (editingIndex >= 0 && confirm('Удалить этот товар?')) {
+                liquids.splice(editingIndex, 1);
+                localStorage.setItem('vapeopt_liquids', JSON.stringify(liquids));
+                
+                window.dispatchEvent(new StorageEvent('storage', {
+                    key: 'vapeopt_liquids',
+                    newValue: JSON.stringify(liquids)
+                }));
+                
+                document.getElementById('productModal').classList.remove('show');
+                displayProducts();
+            }
+        });
+
+        // Добавление нового вкуса
+        document.getElementById('addFlavorBtn').addEventListener('click', () => addFlavorRow());
+
+        // Закрытие модального окна
+        document.getElementById('closeModal').addEventListener('click', () => {
+            document.getElementById('productModal').classList.remove('show');
+        });
+
+        document.getElementById('productModal').addEventListener('click', (e) => {
+            if (e.target === document.getElementById('productModal')) {
+                e.target.classList.remove('show');
+            }
+        });
+
+        // Инициализация
+        displayProducts();
+
+        // Слушаем изменения из других страниц
+        window.addEventListener('storage', function(e) {
+            if (e.key === 'vapeopt_liquids') {
+                liquids = JSON.parse(e.newValue || '[]');
+                displayProducts();
+            }
+        });
+    </script>
+</body>
+</html>

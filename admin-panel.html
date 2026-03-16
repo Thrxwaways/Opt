@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>VAPEOPT | АДМИН-ПАНЕЛЬ</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            -webkit-touch-callout: none;
+            font-family: 'Montserrat', 'Orbitron', sans-serif;
+        }
+
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Orbitron:wght@400;700;900&display=swap');
+
+        body {
+            background: #03050f;
+            background-image: radial-gradient(ellipse at 50% 30%, #1b2b55 0%, #020412 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px;
+        }
+
+        a:focus,
+        button:focus,
+        div:focus,
+        .cargo-module:focus,
+        .control-btn:focus {
+            outline: none !important;
+            box-shadow: none !important;
+        }
+
+        :focus {
+            outline: none !important;
+        }
+
+        ::-moz-focus-inner {
+            border: 0;
+        }
+
+        ::selection {
+            background: transparent;
+        }
+
+        .ship-hud {
+            width: 100%;
+            max-width: 500px;
+            height: 95vh;
+            max-height: 900px;
+            background: rgba(2, 10, 22, 0.8);
+            backdrop-filter: blur(12px);
+            border: 3px solid #3e7bff;
+            border-radius: 50px;
+            box-shadow: 0 0 60px #1e4fcf, 0 0 30px #3e7bff inset;
+            padding: 30px 22px;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .ship-hud::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 200%;
+            height: 10px;
+            background: linear-gradient(90deg, transparent, #3e7bff, transparent);
+            animation: scanLine 4s linear infinite;
+            opacity: 0.5;
+        }
+
+        @keyframes scanLine {
+            0% { top: 0; }
+            100% { top: 100%; }
+        }
+
+        .hologram-ring {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 400px;
+            height: 400px;
+            border: 2px dashed #3e7bff30;
+            border-radius: 50%;
+            pointer-events: none;
+            animation: rotateRing 20s linear infinite;
+        }
+
+        .hologram-ring2 {
+            width: 300px;
+            height: 300px;
+            border: 1px solid #3e7bff20;
+            border-radius: 50%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            animation: rotateRingReverse 15s linear infinite;
+        }
+
+        @keyframes rotateRing {
+            from { transform: translate(-50%, -50%) rotate(0deg); }
+            to { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+
+        @keyframes rotateRingReverse {
+            from { transform: translate(-50%, -50%) rotate(0deg); }
+            to { transform: translate(-50%, -50%) rotate(-360deg); }
+        }
+
+        .ship-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .ship-title {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .ship-name {
+            font-size: 2.8rem;
+            font-weight: 900;
+            color: #8fb8ff;
+            text-shadow: 0 0 20px #3e7bff, 0 0 40px #1e4fcf;
+            letter-spacing: 4px;
+            line-height: 1;
+            font-family: 'Orbitron', sans-serif;
+            animation: glowPulse 3s ease-in-out infinite;
+        }
+
+        .ship-sub {
+            font-size: 0.9rem;
+            color: #afc9ff;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        @keyframes glowPulse {
+            0%, 100% { text-shadow: 0 0 20px #3e7bff, 0 0 40px #1e4fcf; }
+            50% { text-shadow: 0 0 30px #5f9eff, 0 0 60px #2f6fdf; }
+        }
+
+        .header-controls {
+            display: flex;
+            gap: 10px;
+        }
+
+        .control-btn {
+            background: #10213f;
+            border: 2px solid #3e7bff;
+            color: #8fb8ff;
+            width: 45px;
+            height: 45px;
+            border-radius: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            text-decoration: none;
+            box-shadow: 0 0 20px #3e7bff;
+            transition: 0.2s;
+        }
+
+        .control-btn:hover {
+            background: #3e7bff;
+            color: black;
+            transform: scale(1.1);
+            box-shadow: 0 0 30px #3e7bff;
+        }
+
+        .ship-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            flex: 1;
+            align-content: start;
+            padding-top: 10px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .cargo-module {
+            background: rgba(8, 20, 40, 0.7);
+            backdrop-filter: blur(5px);
+            border: 3px solid #3e7bff;
+            border-radius: 30px;
+            padding: 15px 5px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: 0.3s;
+            box-shadow: 0 15px 30px -12px black, 0 0 0 2px #8fb8ff inset;
+            aspect-ratio: 1/1;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Специальный контейнер для последнего ряда */
+        .last-row {
+            grid-column: span 2;
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 0;
+        }
+
+        .last-row .cargo-module {
+            width: calc(50% - 7.5px);
+            margin: 0;
+        }
+
+        .cargo-module:hover {
+            transform: translateY(-3px);
+            border-color: #8fb8ff;
+            box-shadow: 0 0 40px #3e7bff, 0 0 20px #8fb8ff inset;
+        }
+
+        .cargo-module::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                repeating-linear-gradient(90deg, 
+                    transparent, 
+                    transparent 10px,
+                    rgba(62, 123, 255, 0.1) 10px,
+                    rgba(62, 123, 255, 0.1) 12px
+                ),
+                repeating-linear-gradient(0deg, 
+                    transparent, 
+                    transparent 10px,
+                    rgba(62, 123, 255, 0.1) 10px,
+                    rgba(62, 123, 255, 0.1) 12px
+                );
+            border-radius: 28px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+            animation: electricity 0.5s steps(2) infinite;
+        }
+
+        .cargo-module:hover::after {
+            opacity: 0.8;
+        }
+
+        @keyframes electricity {
+            0% { background-position: 0 0; }
+            100% { background-position: 20px 20px; }
+        }
+
+        .cargo-icon {
+            font-size: 2.5rem;
+            margin-bottom: 5px;
+            filter: drop-shadow(0 0 8px #3e7bff);
+            animation: iconFloat 3s ease-in-out infinite;
+        }
+
+        @keyframes iconFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-3px); }
+        }
+
+        .cargo-name {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #cfdfff;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-align: center;
+            line-height: 1.2;
+            margin-bottom: 5px;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        .stock-status {
+            font-size: 0.7rem;
+            padding: 3px 10px;
+            border-radius: 15px;
+            margin-top: 3px;
+            border: 1px solid;
+            transition: all 0.3s ease;
+            width: fit-content;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        .stock-status.in-stock {
+            background: #0a2a1a;
+            border-color: #2ecc71;
+            color: #a0e0a0;
+            text-shadow: 0 0 5px #2ecc71;
+        }
+
+        .stock-status.out-of-stock {
+            background: #2a1a1a;
+            border-color: #e74c3c;
+            color: #f0a0a0;
+            text-shadow: 0 0 5px #e74c3c;
+        }
+
+        .orders-section {
+            margin-top: 15px;
+            border-top: 2px solid #3e7bff;
+            padding-top: 15px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .orders-title {
+            font-size: 1.2rem;
+            color: #8fb8ff;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            margin-bottom: 10px;
+            text-align: center;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        .orders-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .order-card {
+            background: rgba(8, 20, 40, 0.5);
+            border: 2px solid #3e7bff;
+            border-radius: 20px;
+            padding: 12px 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        .order-number {
+            font-size: 0.8rem;
+            color: #8fb8ff;
+            margin-bottom: 3px;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        .order-items {
+            font-size: 0.7rem;
+            color: #8fb8ff;
+            margin-bottom: 5px;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        .order-status {
+            font-size: 0.7rem;
+            padding: 3px 10px;
+            border-radius: 12px;
+            background: #0a1a33;
+            border: 1px solid #3e7bff;
+            color: #8fb8ff;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        .order-status.pending {
+            border-color: #f39c12;
+            color: #f1c40f;
+        }
+
+        .order-status.completed {
+            border-color: #2ecc71;
+            color: #2ecc71;
+        }
+
+        .ship-display {
+            margin-top: 10px;
+            text-align: center;
+            font-size: 0.9rem;
+            color: #8fb8ff;
+            letter-spacing: 3px;
+            border-top: 2px solid #3e7bff;
+            padding-top: 10px;
+            position: relative;
+            z-index: 2;
+            text-transform: uppercase;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        @media (max-width: 400px) {
+            .ship-name { font-size: 2.3rem; }
+            .cargo-icon { font-size: 2rem; }
+            .cargo-name { font-size: 1rem; }
+            .last-row .cargo-module { width: calc(50% - 7.5px); }
+        }
+    </style>
+</head>
+<body>
+    <div class="ship-hud">
+        <div class="hologram-ring"></div>
+        <div class="hologram-ring2"></div>
+
+        <div class="ship-header">
+            <div class="ship-title">
+                <div class="ship-name">VAPEOPT</div>
+                <div class="ship-sub">АДМИН-ПАНЕЛЬ</div>
+            </div>
+            <div class="header-controls">
+                <a href="index.html" class="control-btn" title="На главную">🏠</a>
+            </div>
+        </div>
+
+        <div class="ship-grid" id="shipGrid">
+            <!-- Блоки будут заполнены динамически -->
+        </div>
+
+        <div class="orders-section">
+            <div class="orders-title">📋 ЗАКАЗЫ</div>
+            <div class="orders-grid" id="ordersGrid"></div>
+        </div>
+
+        <div class="ship-display">
+            <span>▼ ПАНЕЛЬ УПРАВЛЕНИЯ ▼</span>
+        </div>
+    </div>
+
+    <script>
+        // Функция для получения актуальных данных о товарах
+        function getSectionsData() {
+            const liquids = JSON.parse(localStorage.getItem('vapeopt_liquids')) || [];
+            const consumables = JSON.parse(localStorage.getItem('vapeopt_consumables')) || [];
+            const pod = JSON.parse(localStorage.getItem('vapeopt_pod')) || [];
+            const odnorazki = JSON.parse(localStorage.getItem('vapeopt_odnorazki')) || [];
+            const snus = JSON.parse(localStorage.getItem('vapeopt_snus')) || [];
+            
+            // Считаем количество товаров в наличии
+            const liquidsInStock = liquids.filter(l => 
+                l.flavors && l.flavors.some(f => f.inStock !== false)
+            ).length;
+            
+            const liquidsOutOfStock = liquids.filter(l => 
+                !l.flavors || !l.flavors.some(f => f.inStock !== false)
+            ).length;
+            
+            const consumablesInStock = consumables.filter(c => 
+                c.items && c.items.some(item => item.inStock !== false)
+            ).length;
+            
+            const consumablesOutOfStock = consumables.filter(c => 
+                !c.items || !c.items.some(item => item.inStock !== false)
+            ).length;
+            
+            const podInStock = pod.filter(p => 
+                p.items && p.items.some(item => item.inStock !== false)
+            ).length;
+            
+            const podOutOfStock = pod.filter(p => 
+                !p.items || !p.items.some(item => item.inStock !== false)
+            ).length;
+            
+            const odnorazkiInStock = odnorazki.filter(o => 
+                o.items && o.items.some(item => item.inStock !== false)
+            ).length;
+            
+            const odnorazkiOutOfStock = odnorazki.filter(o => 
+                !o.items || !o.items.some(item => item.inStock !== false)
+            ).length;
+            
+            const snusInStock = snus.filter(s => 
+                s.items && s.items.some(item => item.inStock !== false)
+            ).length;
+            
+            const snusOutOfStock = snus.filter(s => 
+                !s.items || !s.items.some(item => item.inStock !== false)
+            ).length;
+            
+            return [
+                { 
+                    name: 'Жидкости', 
+                    icon: '🧪', 
+                    inStock: liquidsInStock, 
+                    outOfStock: liquidsOutOfStock,
+                    link: 'zhidk-admin.html'
+                },
+                { 
+                    name: 'Расходники', 
+                    icon: '⚙️', 
+                    inStock: consumablesInStock, 
+                    outOfStock: consumablesOutOfStock,
+                    link: 'rashod-admin.html'
+                },
+                { 
+                    name: 'POD', 
+                    icon: '📦', 
+                    inStock: podInStock, 
+                    outOfStock: podOutOfStock,
+                    link: 'pod-admin.html'
+                },
+                { 
+                    name: 'Одноразки', 
+                    icon: '💨', 
+                    inStock: odnorazkiInStock, 
+                    outOfStock: odnorazkiOutOfStock,
+                    link: 'odnoraz-admin.html'
+                },
+                { 
+                    name: 'Снюс', 
+                    icon: '🫑', 
+                    inStock: snusInStock, 
+                    outOfStock: snusOutOfStock,
+                    link: 'snus-admin.html'
+                }
+            ];
+        }
+
+        function getOrdersFromCart() {
+            const cart = JSON.parse(localStorage.getItem('vapeopt_cart')) || [];
+            const orders = [];
+            
+            for (let i = 0; i < Math.min(cart.length, 4); i++) {
+                orders.push({
+                    number: `ORD-${String(i + 1).padStart(3, '0')}`,
+                    status: i % 2 === 0 ? 'pending' : 'completed',
+                    items: cart[i]?.quantity || Math.floor(Math.random() * 5) + 1
+                });
+            }
+            
+            if (orders.length === 0) {
+                for (let i = 0; i < 4; i++) {
+                    orders.push({
+                        number: `ORD-${String(i + 1).padStart(3, '0')}`,
+                        status: i % 2 === 0 ? 'pending' : 'completed',
+                        items: Math.floor(Math.random() * 5) + 1
+                    });
+                }
+            }
+            
+            return orders;
+        }
+
+        const grid = document.getElementById('shipGrid');
+        const ordersGrid = document.getElementById('ordersGrid');
+
+        function createModule(section) {
+            const module = document.createElement('div');
+            module.className = 'cargo-module';
+            
+            const stockClass = section.inStock > 0 ? 'in-stock' : 'out-of-stock';
+            const stockText = section.inStock > 0 ? `в наличии: ${section.inStock}` : `нет в наличии: ${section.outOfStock}`;
+
+            module.innerHTML = `
+                <span class="cargo-icon">${section.icon}</span>
+                <span class="cargo-name">${section.name}</span>
+                <span class="stock-status ${stockClass}">${stockText}</span>
+            `;
+
+            module.addEventListener('click', function() {
+                if (section.link && section.link !== '#') {
+                    window.location.href = section.link;
+                } else {
+                    alert(`Раздел "${section.name}" находится в разработке`);
+                }
+            });
+
+            return module;
+        }
+
+        function createOrderCard(order) {
+            const card = document.createElement('div');
+            card.className = 'order-card';
+            
+            const statusClass = order.status === 'pending' ? 'pending' : 'completed';
+            const statusText = order.status === 'pending' ? 'ОЖИДАНИЕ' : 'ВЫПОЛНЕН';
+
+            card.innerHTML = `
+                <div class="order-number">${order.number}</div>
+                <div class="order-items">${order.items} товар(а)</div>
+                <div class="order-status ${statusClass}">${statusText}</div>
+            `;
+
+            return card;
+        }
+
+        function updateDisplay() {
+            grid.innerHTML = '';
+            const sectionsData = getSectionsData();
+            
+            // Добавляем первые 4 элемента в сетку 2x2
+            for (let i = 0; i < 4; i++) {
+                grid.appendChild(createModule(sectionsData[i]));
+            }
+            
+            // Создаем специальный контейнер для последнего ряда
+            const lastRow = document.createElement('div');
+            lastRow.className = 'last-row';
+            
+            // Добавляем снюс в последний ряд
+            const snusModule = createModule(sectionsData[4]);
+            lastRow.appendChild(snusModule);
+            
+            // Добавляем пустой модуль для симметрии (невидимый)
+            const emptyModule = document.createElement('div');
+            emptyModule.style.visibility = 'hidden';
+            emptyModule.style.pointerEvents = 'none';
+            emptyModule.className = 'cargo-module';
+            emptyModule.style.background = 'transparent';
+            emptyModule.style.boxShadow = 'none';
+            emptyModule.style.border = 'none';
+            lastRow.appendChild(emptyModule);
+            
+            grid.appendChild(lastRow);
+        }
+
+        function updateOrders() {
+            ordersGrid.innerHTML = '';
+            const orders = getOrdersFromCart();
+            orders.slice(0, 4).forEach(order => {
+                ordersGrid.appendChild(createOrderCard(order));
+            });
+        }
+
+        // Первоначальное заполнение
+        updateDisplay();
+        updateOrders();
+
+        // Слушаем изменения в localStorage
+        window.addEventListener('storage', function(e) {
+            if (e.key === 'vapeopt_liquids' || e.key === 'vapeopt_consumables' || 
+                e.key === 'vapeopt_pod' || e.key === 'vapeopt_odnorazki' || 
+                e.key === 'vapeopt_snus' || e.key === 'vapeopt_cart') {
+                updateDisplay();
+                updateOrders();
+            }
+        });
+
+        // Обновляем каждые 3 секунды для синхронизации
+        setInterval(() => {
+            updateDisplay();
+            updateOrders();
+        }, 3000);
+    </script>
+</body>
+</html>
