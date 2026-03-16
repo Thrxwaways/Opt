@@ -30,7 +30,8 @@
         button:focus,
         div:focus,
         .cargo-module:focus,
-        .control-btn:focus {
+        .control-btn:focus,
+        .order-card:focus {
             outline: none !important;
             box-shadow: none !important;
         }
@@ -41,10 +42,6 @@
 
         ::-moz-focus-inner {
             border: 0;
-        }
-
-        ::selection {
-            background: transparent;
         }
 
         .ship-hud {
@@ -131,20 +128,20 @@
         }
 
         .ship-name {
-            font-size: 2.8rem;
+            font-size: 2rem;
             font-weight: 900;
             color: #8fb8ff;
             text-shadow: 0 0 20px #3e7bff, 0 0 40px #1e4fcf;
-            letter-spacing: 4px;
+            letter-spacing: 3px;
             line-height: 1;
             font-family: 'Orbitron', sans-serif;
             animation: glowPulse 3s ease-in-out infinite;
         }
 
         .ship-sub {
-            font-size: 0.9rem;
+            font-size: 0.7rem;
             color: #afc9ff;
-            letter-spacing: 4px;
+            letter-spacing: 3px;
             text-transform: uppercase;
             font-family: 'Orbitron', sans-serif;
         }
@@ -156,22 +153,22 @@
 
         .header-controls {
             display: flex;
-            gap: 10px;
+            gap: 8px;
         }
 
         .control-btn {
             background: #10213f;
             border: 2px solid #3e7bff;
             color: #8fb8ff;
-            width: 45px;
-            height: 45px;
-            border-radius: 25px;
+            width: 40px;
+            height: 40px;
+            border-radius: 20px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.5rem;
+            font-size: 1.3rem;
             text-decoration: none;
-            box-shadow: 0 0 20px #3e7bff;
+            box-shadow: 0 0 15px #3e7bff;
             transition: 0.2s;
         }
 
@@ -179,13 +176,12 @@
             background: #3e7bff;
             color: black;
             transform: scale(1.1);
-            box-shadow: 0 0 30px #3e7bff;
         }
 
         .ship-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 15px;
+            gap: 12px;
             flex: 1;
             align-content: start;
             padding-top: 10px;
@@ -197,8 +193,8 @@
             background: rgba(8, 20, 40, 0.7);
             backdrop-filter: blur(5px);
             border: 3px solid #3e7bff;
-            border-radius: 30px;
-            padding: 15px 5px;
+            border-radius: 25px;
+            padding: 12px 5px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -211,64 +207,27 @@
             overflow: hidden;
         }
 
-        /* Специальный контейнер для последнего ряда */
         .last-row {
             grid-column: span 2;
             display: flex;
             justify-content: center;
-            gap: 15px;
+            gap: 12px;
             margin-top: 0;
         }
 
         .last-row .cargo-module {
-            width: calc(50% - 7.5px);
+            width: calc(50% - 6px);
             margin: 0;
         }
 
         .cargo-module:hover {
             transform: translateY(-3px);
             border-color: #8fb8ff;
-            box-shadow: 0 0 40px #3e7bff, 0 0 20px #8fb8ff inset;
-        }
-
-        .cargo-module::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: 
-                repeating-linear-gradient(90deg, 
-                    transparent, 
-                    transparent 10px,
-                    rgba(62, 123, 255, 0.1) 10px,
-                    rgba(62, 123, 255, 0.1) 12px
-                ),
-                repeating-linear-gradient(0deg, 
-                    transparent, 
-                    transparent 10px,
-                    rgba(62, 123, 255, 0.1) 10px,
-                    rgba(62, 123, 255, 0.1) 12px
-                );
-            border-radius: 28px;
-            opacity: 0;
-            transition: opacity 0.3s;
-            pointer-events: none;
-            animation: electricity 0.5s steps(2) infinite;
-        }
-
-        .cargo-module:hover::after {
-            opacity: 0.8;
-        }
-
-        @keyframes electricity {
-            0% { background-position: 0 0; }
-            100% { background-position: 20px 20px; }
+            box-shadow: 0 0 30px #3e7bff, 0 0 15px #8fb8ff inset;
         }
 
         .cargo-icon {
-            font-size: 2.5rem;
+            font-size: 2rem;
             margin-bottom: 5px;
             filter: drop-shadow(0 0 8px #3e7bff);
             animation: iconFloat 3s ease-in-out infinite;
@@ -280,7 +239,7 @@
         }
 
         .cargo-name {
-            font-size: 1.2rem;
+            font-size: 0.9rem;
             font-weight: 700;
             color: #cfdfff;
             text-transform: uppercase;
@@ -292,9 +251,9 @@
         }
 
         .stock-status {
-            font-size: 0.7rem;
-            padding: 3px 10px;
-            border-radius: 15px;
+            font-size: 0.6rem;
+            padding: 2px 8px;
+            border-radius: 12px;
             margin-top: 3px;
             border: 1px solid;
             transition: all 0.3s ease;
@@ -316,7 +275,8 @@
             text-shadow: 0 0 5px #e74c3c;
         }
 
-        .orders-section {
+        /* Кнопка заказов внизу */
+        .orders-button {
             margin-top: 15px;
             border-top: 2px solid #3e7bff;
             padding-top: 15px;
@@ -324,75 +284,341 @@
             z-index: 2;
         }
 
-        .orders-title {
-            font-size: 1.2rem;
+        .orders-btn {
+            width: 100%;
+            background: #10213f;
+            border: 3px solid #3e7bff;
             color: #8fb8ff;
+            padding: 15px;
+            font-size: 1.1rem;
+            font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 3px;
-            margin-bottom: 10px;
+            border-radius: 40px;
+            cursor: pointer;
+            transition: 0.3s;
+            font-family: 'Orbitron', sans-serif;
+            box-shadow: 0 0 20px #3e7bff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .orders-btn:hover {
+            background: #3e7bff;
+            color: black;
+            transform: translateY(-2px);
+            box-shadow: 0 0 30px #3e7bff;
+        }
+
+        .orders-btn .order-count {
+            background: #e74c3c;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            margin-left: 5px;
+            box-shadow: 0 0 10px #e74c3c;
+        }
+
+        /* Модальное окно заказов */
+        .orders-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(2, 10, 22, 0.95);
+            backdrop-filter: blur(10px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .orders-modal.show {
+            display: flex;
+        }
+
+        .orders-modal-content {
+            width: 90%;
+            max-width: 500px;
+            height: 85vh;
+            background: rgba(8, 20, 40, 0.95);
+            border: 3px solid #3e7bff;
+            border-radius: 30px;
+            padding: 20px;
+            box-shadow: 0 0 50px #3e7bff;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .orders-modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #3e7bff;
+        }
+
+        .orders-modal-header h2 {
+            color: #8fb8ff;
+            font-size: 1.3rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .close-orders-modal {
+            background: none;
+            border: 2px solid #e74c3c;
+            color: #e74c3c;
+            width: 35px;
+            height: 35px;
+            border-radius: 18px;
+            font-size: 1.3rem;
+            cursor: pointer;
+            transition: 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .close-orders-modal:hover {
+            background: #e74c3c;
+            color: black;
+        }
+
+        .orders-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .orders-tab {
+            flex: 1;
+            background: #10213f;
+            border: 2px solid #3e7bff;
+            border-radius: 30px;
+            padding: 10px 0;
             text-align: center;
-            font-family: 'Montserrat', sans-serif;
+            color: #8fb8ff;
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .orders-tab.active {
+            background: #3e7bff;
+            color: black;
+            border-color: #8fb8ff;
+            box-shadow: 0 0 20px #3e7bff;
+        }
+
+        .orders-scroll-area {
+            flex: 1;
+            overflow-y: auto;
+            padding-right: 5px;
         }
 
         .orders-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
+            grid-template-columns: 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
         }
 
         .order-card {
-            background: rgba(8, 20, 40, 0.5);
+            background: rgba(8, 20, 40, 0.7);
             border: 2px solid #3e7bff;
-            border-radius: 20px;
-            padding: 12px 8px;
+            border-radius: 25px;
+            padding: 15px;
+            transition: 0.2s;
+        }
+
+        .order-card.pending {
+            border-left: 6px solid #f39c12;
+        }
+
+        .order-card.completed {
+            border-left: 6px solid #2ecc71;
+        }
+
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #3e7bff40;
+        }
+
+        .order-number {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #8fb8ff;
+            text-shadow: 0 0 10px #3e7bff;
+        }
+
+        .order-date {
+            font-size: 0.7rem;
+            color: #a0aec0;
+        }
+
+        .order-customer {
+            background: rgba(8, 20, 40, 0.5);
+            border: 1px solid #3e7bff;
+            border-radius: 15px;
+            padding: 8px 12px;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .customer-telegram {
+            color: #8fb8ff;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .customer-name {
+            color: #cfdfff;
+            font-size: 0.8rem;
+        }
+
+        .order-items-list {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .order-mini-item {
+            background: rgba(8, 20, 40, 0.5);
+            border: 1px solid #3e7bff40;
+            border-radius: 12px;
+            padding: 6px;
             display: flex;
             flex-direction: column;
             align-items: center;
             text-align: center;
         }
 
-        .order-number {
+        .order-mini-item-name {
+            font-size: 0.7rem;
+            color: #cfdfff;
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+
+        .order-mini-item-details {
+            font-size: 0.6rem;
+            color: #8fb8ff;
+        }
+
+        .order-mini-item-price {
+            font-size: 0.65rem;
+            color: #2ecc71;
+            margin-top: 2px;
+        }
+
+        .order-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 10px;
+            padding-top: 8px;
+            border-top: 1px solid #3e7bff40;
+        }
+
+        .order-total {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .total-label {
+            font-size: 0.6rem;
+            color: #8fb8ff;
+            text-transform: uppercase;
+        }
+
+        .total-value {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #2ecc71;
+        }
+
+        .total-currency {
+            font-size: 0.7rem;
+            color: #8fb8ff;
+            margin-left: 2px;
+        }
+
+        .order-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .order-btn {
+            background: #10213f;
+            border: 2px solid;
+            border-radius: 25px;
+            padding: 6px 15px;
             font-size: 0.8rem;
-            color: #8fb8ff;
-            margin-bottom: 3px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: 0.2s;
             font-family: 'Montserrat', sans-serif;
         }
 
-        .order-items {
-            font-size: 0.7rem;
-            color: #8fb8ff;
-            margin-bottom: 5px;
-            font-family: 'Montserrat', sans-serif;
-        }
-
-        .order-status {
-            font-size: 0.7rem;
-            padding: 3px 10px;
-            border-radius: 12px;
-            background: #0a1a33;
-            border: 1px solid #3e7bff;
-            color: #8fb8ff;
-            font-family: 'Montserrat', sans-serif;
-        }
-
-        .order-status.pending {
-            border-color: #f39c12;
-            color: #f1c40f;
-        }
-
-        .order-status.completed {
+        .order-btn.complete {
             border-color: #2ecc71;
             color: #2ecc71;
+        }
+
+        .order-btn.complete:hover {
+            background: #2ecc71;
+            color: black;
+            box-shadow: 0 0 15px #2ecc71;
+        }
+
+        .order-btn.delete {
+            border-color: #e74c3c;
+            color: #e74c3c;
+        }
+
+        .order-btn.delete:hover {
+            background: #e74c3c;
+            color: black;
+            box-shadow: 0 0 15px #e74c3c;
+        }
+
+        .empty-orders {
+            text-align: center;
+            color: #8fb8ff;
+            padding: 30px 20px;
+            border: 2px dashed #3e7bff;
+            border-radius: 30px;
+            background: rgba(8, 20, 40, 0.5);
+            font-size: 0.9rem;
         }
 
         .ship-display {
             margin-top: 10px;
             text-align: center;
-            font-size: 0.9rem;
+            font-size: 0.7rem;
             color: #8fb8ff;
-            letter-spacing: 3px;
+            letter-spacing: 2px;
             border-top: 2px solid #3e7bff;
-            padding-top: 10px;
+            padding-top: 8px;
             position: relative;
             z-index: 2;
             text-transform: uppercase;
@@ -400,10 +626,12 @@
         }
 
         @media (max-width: 400px) {
-            .ship-name { font-size: 2.3rem; }
-            .cargo-icon { font-size: 2rem; }
-            .cargo-name { font-size: 1rem; }
-            .last-row .cargo-module { width: calc(50% - 7.5px); }
+            .ship-name { font-size: 1.8rem; }
+            .cargo-icon { font-size: 1.8rem; }
+            .cargo-name { font-size: 0.8rem; }
+            .order-items-list { grid-template-columns: 1fr; }
+            .order-footer { flex-direction: column; gap: 10px; }
+            .order-actions { width: 100%; justify-content: center; }
         }
     </style>
 </head>
@@ -426,9 +654,12 @@
             <!-- Блоки будут заполнены динамически -->
         </div>
 
-        <div class="orders-section">
-            <div class="orders-title">📋 ЗАКАЗЫ</div>
-            <div class="orders-grid" id="ordersGrid"></div>
+        <!-- Кнопка заказов внизу -->
+        <div class="orders-button">
+            <button class="orders-btn" id="showOrdersBtn">
+                📋 ЗАКАЗЫ
+                <span class="order-count" id="pendingOrdersCount">0</span>
+            </button>
         </div>
 
         <div class="ship-display">
@@ -436,122 +667,133 @@
         </div>
     </div>
 
-    <script>
-        // Функция для получения актуальных данных о товарах
-        function getSectionsData() {
-            const liquids = JSON.parse(localStorage.getItem('vapeopt_liquids')) || [];
-            const consumables = JSON.parse(localStorage.getItem('vapeopt_consumables')) || [];
-            const pod = JSON.parse(localStorage.getItem('vapeopt_pod')) || [];
-            const odnorazki = JSON.parse(localStorage.getItem('vapeopt_odnorazki')) || [];
-            const snus = JSON.parse(localStorage.getItem('vapeopt_snus')) || [];
-            
-            // Считаем количество товаров в наличии
-            const liquidsInStock = liquids.filter(l => 
-                l.flavors && l.flavors.some(f => f.inStock !== false)
-            ).length;
-            
-            const liquidsOutOfStock = liquids.filter(l => 
-                !l.flavors || !l.flavors.some(f => f.inStock !== false)
-            ).length;
-            
-            const consumablesInStock = consumables.filter(c => 
-                c.items && c.items.some(item => item.inStock !== false)
-            ).length;
-            
-            const consumablesOutOfStock = consumables.filter(c => 
-                !c.items || !c.items.some(item => item.inStock !== false)
-            ).length;
-            
-            const podInStock = pod.filter(p => 
-                p.items && p.items.some(item => item.inStock !== false)
-            ).length;
-            
-            const podOutOfStock = pod.filter(p => 
-                !p.items || !p.items.some(item => item.inStock !== false)
-            ).length;
-            
-            const odnorazkiInStock = odnorazki.filter(o => 
-                o.items && o.items.some(item => item.inStock !== false)
-            ).length;
-            
-            const odnorazkiOutOfStock = odnorazki.filter(o => 
-                !o.items || !o.items.some(item => item.inStock !== false)
-            ).length;
-            
-            const snusInStock = snus.filter(s => 
-                s.items && s.items.some(item => item.inStock !== false)
-            ).length;
-            
-            const snusOutOfStock = snus.filter(s => 
-                !s.items || !s.items.some(item => item.inStock !== false)
-            ).length;
-            
-            return [
-                { 
-                    name: 'Жидкости', 
-                    icon: '🧪', 
-                    inStock: liquidsInStock, 
-                    outOfStock: liquidsOutOfStock,
-                    link: 'zhidk-admin.html'
-                },
-                { 
-                    name: 'Расходники', 
-                    icon: '⚙️', 
-                    inStock: consumablesInStock, 
-                    outOfStock: consumablesOutOfStock,
-                    link: 'rashod-admin.html'
-                },
-                { 
-                    name: 'POD', 
-                    icon: '📦', 
-                    inStock: podInStock, 
-                    outOfStock: podOutOfStock,
-                    link: 'pod-admin.html'
-                },
-                { 
-                    name: 'Одноразки', 
-                    icon: '💨', 
-                    inStock: odnorazkiInStock, 
-                    outOfStock: odnorazkiOutOfStock,
-                    link: 'odnoraz-admin.html'
-                },
-                { 
-                    name: 'Снюс', 
-                    icon: '🫑', 
-                    inStock: snusInStock, 
-                    outOfStock: snusOutOfStock,
-                    link: 'snus-admin.html'
-                }
-            ];
-        }
+    <!-- Модальное окно заказов -->
+    <div class="orders-modal" id="ordersModal">
+        <div class="orders-modal-content">
+            <div class="orders-modal-header">
+                <h2>📋 УПРАВЛЕНИЕ ЗАКАЗАМИ</h2>
+                <button class="close-orders-modal" id="closeOrdersModal">✕</button>
+            </div>
 
-        function getOrdersFromCart() {
-            const cart = JSON.parse(localStorage.getItem('vapeopt_cart')) || [];
-            const orders = [];
-            
-            for (let i = 0; i < Math.min(cart.length, 4); i++) {
-                orders.push({
-                    number: `ORD-${String(i + 1).padStart(3, '0')}`,
-                    status: i % 2 === 0 ? 'pending' : 'completed',
-                    items: cart[i]?.quantity || Math.floor(Math.random() * 5) + 1
-                });
+            <div class="orders-tabs">
+                <div class="orders-tab active" onclick="switchOrdersTab('pending')" id="tabPending">🕒 НЕВЫПОЛНЕННЫЕ</div>
+                <div class="orders-tab" onclick="switchOrdersTab('completed')" id="tabCompleted">✅ ВЫПОЛНЕННЫЕ</div>
+            </div>
+
+            <div class="orders-scroll-area">
+                <div class="orders-grid" id="ordersGrid"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+    <script src="firebase-config.js"></script>
+
+    <script>
+        // ==================== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ====================
+        let currentTab = 'pending';
+        let orders = [];
+        let allOrders = [];
+
+        // ==================== ФУНКЦИИ ДЛЯ РАЗДЕЛОВ ТОВАРОВ ====================
+        async function getSectionsData() {
+            try {
+                const [liquids, consumables, pod, disposables, snus] = await Promise.all([
+                    FirestoreService.getCollection('liquids'),
+                    FirestoreService.getCollection('consumables'),
+                    FirestoreService.getCollection('pod'),
+                    FirestoreService.getCollection('disposables'),
+                    FirestoreService.getCollection('snus')
+                ]);
+                
+                const liquidsInStock = liquids.filter(l => 
+                    l.flavors && l.flavors.some(f => f.inStock !== false)
+                ).length;
+                
+                const liquidsOutOfStock = liquids.filter(l => 
+                    !l.flavors || !l.flavors.some(f => f.inStock !== false)
+                ).length;
+                
+                const consumablesInStock = consumables.filter(c => 
+                    c.items && c.items.some(item => item.inStock !== false)
+                ).length;
+                
+                const consumablesOutOfStock = consumables.filter(c => 
+                    !c.items || !c.items.some(item => item.inStock !== false)
+                ).length;
+                
+                const podInStock = pod.filter(p => 
+                    p.items && p.items.some(item => item.inStock !== false)
+                ).length;
+                
+                const podOutOfStock = pod.filter(p => 
+                    !p.items || !p.items.some(item => item.inStock !== false)
+                ).length;
+                
+                const disposablesInStock = disposables.filter(d => 
+                    d.items && d.items.some(item => item.inStock !== false)
+                ).length;
+                
+                const disposablesOutOfStock = disposables.filter(d => 
+                    !d.items || !d.items.some(item => item.inStock !== false)
+                ).length;
+                
+                const snusInStock = snus.filter(s => 
+                    s.items && s.items.some(item => item.inStock !== false)
+                ).length;
+                
+                const snusOutOfStock = snus.filter(s => 
+                    !s.items || !s.items.some(item => item.inStock !== false)
+                ).length;
+                
+                return [
+                    { 
+                        name: 'Жидкости', 
+                        icon: '🧪', 
+                        inStock: liquidsInStock, 
+                        outOfStock: liquidsOutOfStock,
+                        link: 'zhidk-admin.html'
+                    },
+                    { 
+                        name: 'Расходники', 
+                        icon: '⚙️', 
+                        inStock: consumablesInStock, 
+                        outOfStock: consumablesOutOfStock,
+                        link: 'rashod-admin.html'
+                    },
+                    { 
+                        name: 'POD', 
+                        icon: '📦', 
+                        inStock: podInStock, 
+                        outOfStock: podOutOfStock,
+                        link: 'pod-admin.html'
+                    },
+                    { 
+                        name: 'Одноразки', 
+                        icon: '💨', 
+                        inStock: disposablesInStock, 
+                        outOfStock: disposablesOutOfStock,
+                        link: 'odnoraz-admin.html'
+                    },
+                    { 
+                        name: 'Снюс', 
+                        icon: '🫑', 
+                        inStock: snusInStock, 
+                        outOfStock: snusOutOfStock,
+                        link: 'snus-admin.html'
+                    }
+                ];
+            } catch (error) {
+                console.error('Ошибка получения данных:', error);
+                return [];
             }
-            
-            if (orders.length === 0) {
-                for (let i = 0; i < 4; i++) {
-                    orders.push({
-                        number: `ORD-${String(i + 1).padStart(3, '0')}`,
-                        status: i % 2 === 0 ? 'pending' : 'completed',
-                        items: Math.floor(Math.random() * 5) + 1
-                    });
-                }
-            }
-            
-            return orders;
         }
 
         const grid = document.getElementById('shipGrid');
         const ordersGrid = document.getElementById('ordersGrid');
+        const pendingOrdersCount = document.getElementById('pendingOrdersCount');
 
         function createModule(section) {
             const module = document.createElement('div');
@@ -567,50 +809,28 @@
             `;
 
             module.addEventListener('click', function() {
-                if (section.link && section.link !== '#') {
-                    window.location.href = section.link;
-                } else {
-                    alert(`Раздел "${section.name}" находится в разработке`);
-                }
+                window.location.href = section.link;
             });
 
             return module;
         }
 
-        function createOrderCard(order) {
-            const card = document.createElement('div');
-            card.className = 'order-card';
-            
-            const statusClass = order.status === 'pending' ? 'pending' : 'completed';
-            const statusText = order.status === 'pending' ? 'ОЖИДАНИЕ' : 'ВЫПОЛНЕН';
-
-            card.innerHTML = `
-                <div class="order-number">${order.number}</div>
-                <div class="order-items">${order.items} товар(а)</div>
-                <div class="order-status ${statusClass}">${statusText}</div>
-            `;
-
-            return card;
-        }
-
-        function updateDisplay() {
+        async function updateDisplay() {
             grid.innerHTML = '';
-            const sectionsData = getSectionsData();
+            const sectionsData = await getSectionsData();
             
-            // Добавляем первые 4 элемента в сетку 2x2
+            if (sectionsData.length === 0) return;
+            
             for (let i = 0; i < 4; i++) {
                 grid.appendChild(createModule(sectionsData[i]));
             }
             
-            // Создаем специальный контейнер для последнего ряда
             const lastRow = document.createElement('div');
             lastRow.className = 'last-row';
             
-            // Добавляем снюс в последний ряд
             const snusModule = createModule(sectionsData[4]);
             lastRow.appendChild(snusModule);
             
-            // Добавляем пустой модуль для симметрии (невидимый)
             const emptyModule = document.createElement('div');
             emptyModule.style.visibility = 'hidden';
             emptyModule.style.pointerEvents = 'none';
@@ -623,33 +843,236 @@
             grid.appendChild(lastRow);
         }
 
-        function updateOrders() {
-            ordersGrid.innerHTML = '';
-            const orders = getOrdersFromCart();
-            orders.slice(0, 4).forEach(order => {
-                ordersGrid.appendChild(createOrderCard(order));
+        // ==================== ФУНКЦИИ ДЛЯ РАБОТЫ С ЗАКАЗАМИ ====================
+        async function loadOrders() {
+            try {
+                allOrders = await FirestoreService.getCollection('orders');
+                // Сортируем по номеру заказа (от новых к старым)
+                allOrders.sort((a, b) => (b.orderNumber || 0) - (a.orderNumber || 0));
+                
+                // Обновляем счетчик невыполненных заказов
+                const pendingCount = allOrders.filter(o => o.status === 'pending').length;
+                pendingOrdersCount.textContent = pendingCount;
+                
+                filterOrdersByTab();
+            } catch (error) {
+                console.error('Ошибка загрузки заказов:', error);
+                allOrders = [];
+                pendingOrdersCount.textContent = '0';
+                filterOrdersByTab();
+            }
+        }
+
+        function filterOrdersByTab() {
+            orders = allOrders.filter(order => order.status === currentTab);
+            displayOrders();
+        }
+
+        function formatDate(dateString) {
+            if (!dateString) return '';
+            const date = new Date(dateString);
+            return `${date.getDate().toString().padStart(2, '0')}.${(date.getMonth() + 1).toString().padStart(2, '0')}.${date.getFullYear()}`;
+        }
+
+        function getItemDetails(item) {
+            if (item.flavorName) {
+                return `${item.flavorName} • ${item.strengthText || '0'} мг`;
+            } else if (item.resistance) {
+                return `${item.itemName} • ${item.resistance} Ом`;
+            } else if (item.type === 'pod') {
+                return item.itemName;
+            } else if (item.strength && item.puffs) {
+                return `${item.itemName} • ${item.strength}%`;
+            } else if (item.type === 'snus') {
+                return `${item.itemName} • ${item.strength} мг`;
+            }
+            return '';
+        }
+
+        function displayOrders() {
+            if (orders.length === 0) {
+                ordersGrid.innerHTML = `<div class="empty-orders">НЕТ ${currentTab === 'pending' ? 'НЕВЫПОЛНЕННЫХ' : 'ВЫПОЛНЕННЫХ'} ЗАКАЗОВ</div>`;
+                return;
+            }
+
+            let html = '';
+
+            orders.forEach((order, index) => {
+                const orderDate = formatDate(order.createdAt);
+                const itemsPreview = order.items.slice(0, 2);
+                const remainingItems = order.items.length - 2;
+
+                let itemsHtml = '<div class="order-items-list">';
+                
+                itemsPreview.forEach(item => {
+                    const itemName = item.name || item.itemName || 'Товар';
+                    const itemDetails = getItemDetails(item);
+                    
+                    itemsHtml += `
+                        <div class="order-mini-item">
+                            <div class="order-mini-item-name">${itemName.substring(0, 15)}${itemName.length > 15 ? '...' : ''}</div>
+                            <div class="order-mini-item-details">${itemDetails}</div>
+                            <div class="order-mini-item-price">${item.price} ₽ × ${item.quantity}</div>
+                        </div>
+                    `;
+                });
+                
+                if (remainingItems > 0) {
+                    itemsHtml += `<div class="order-mini-item">
+                        <div class="order-mini-item-name">+ еще ${remainingItems}</div>
+                    </div>`;
+                }
+                
+                itemsHtml += '</div>';
+
+                html += `
+                    <div class="order-card ${order.status}">
+                        <div class="order-header">
+                            <span class="order-number">${order.orderId || `№${String(order.orderNumber).padStart(3, '0')}`}</span>
+                            <span class="order-date">${orderDate}</span>
+                        </div>
+                        
+                        <div class="order-customer">
+                            <span class="customer-telegram">${order.customer?.telegram || '@username'}</span>
+                            <span class="customer-name">${order.customer?.name || 'Имя'}</span>
+                        </div>
+
+                        ${itemsHtml}
+
+                        <div class="order-footer">
+                            <div class="order-total">
+                                <span class="total-label">ИТОГО:</span>
+                                <span class="total-value">${order.totalPrice || 0}<span class="total-currency"> BYN</span></span>
+                            </div>
+                            
+                            <div class="order-actions">
+                                ${currentTab === 'pending' ? 
+                                    `<button class="order-btn complete" onclick="completeOrder('${order.id}')">✅ ВЫПОЛНЕНО</button>` : 
+                                    ''
+                                }
+                                <button class="order-btn delete" onclick="deleteOrder('${order.id}')">🗑️ УДАЛИТЬ</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            ordersGrid.innerHTML = html;
+        }
+
+        // Переключение между вкладками
+        window.switchOrdersTab = function(tab) {
+            currentTab = tab;
+            
+            document.getElementById('tabPending').classList.remove('active');
+            document.getElementById('tabCompleted').classList.remove('active');
+            
+            if (tab === 'pending') {
+                document.getElementById('tabPending').classList.add('active');
+            } else {
+                document.getElementById('tabCompleted').classList.add('active');
+            }
+            
+            filterOrdersByTab();
+        };
+
+        // Отметить заказ как выполненный
+        window.completeOrder = async function(orderId) {
+            try {
+                const order = allOrders.find(o => o.id === orderId);
+                if (!order) return;
+
+                order.status = 'completed';
+                await FirestoreService.saveDocument('orders', order, orderId);
+                
+                await loadOrders();
+                
+            } catch (error) {
+                console.error('Ошибка при выполнении заказа:', error);
+                alert('Ошибка при обновлении заказа');
+            }
+        };
+
+        // Удалить заказ
+        window.deleteOrder = async function(orderId) {
+            if (!confirm('Удалить этот заказ? Освободившийся номер будет присвоен следующему заказу.')) return;
+
+            try {
+                const order = allOrders.find(o => o.id === orderId);
+                if (!order) return;
+
+                await FirestoreService.deleteDocument('orders', orderId);
+                
+                const remainingOrders = allOrders.filter(o => o.id !== orderId);
+                
+                remainingOrders.sort((a, b) => (a.orderNumber || 0) - (b.orderNumber || 0));
+                
+                for (let i = 0; i < remainingOrders.length; i++) {
+                    const newNumber = i + 1;
+                    if (remainingOrders[i].orderNumber !== newNumber) {
+                        remainingOrders[i].orderNumber = newNumber;
+                        remainingOrders[i].orderId = `№${String(newNumber).padStart(3, '0')}`;
+                        await FirestoreService.saveDocument('orders', remainingOrders[i], remainingOrders[i].id);
+                    }
+                }
+                
+                await loadOrders();
+                
+            } catch (error) {
+                console.error('Ошибка при удалении заказа:', error);
+                alert('Ошибка при удалении заказа');
+            }
+        };
+
+        // ==================== УПРАВЛЕНИЕ МОДАЛЬНЫМ ОКНОМ ====================
+        function initModal() {
+            const modal = document.getElementById('ordersModal');
+            const showBtn = document.getElementById('showOrdersBtn');
+            const closeBtn = document.getElementById('closeOrdersModal');
+
+            showBtn.addEventListener('click', () => {
+                modal.classList.add('show');
+            });
+
+            closeBtn.addEventListener('click', () => {
+                modal.classList.remove('show');
+            });
+
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    modal.classList.remove('show');
+                }
             });
         }
 
-        // Первоначальное заполнение
-        updateDisplay();
-        updateOrders();
+        // ==================== ПОДПИСКИ НА ОБНОВЛЕНИЯ ====================
+        function subscribeToUpdates() {
+            FirestoreService.subscribeToCollection('liquids', () => updateDisplay());
+            FirestoreService.subscribeToCollection('consumables', () => updateDisplay());
+            FirestoreService.subscribeToCollection('pod', () => updateDisplay());
+            FirestoreService.subscribeToCollection('disposables', () => updateDisplay());
+            FirestoreService.subscribeToCollection('snus', () => updateDisplay());
+            
+            FirestoreService.subscribeToCollection('orders', (updatedOrders) => {
+                allOrders = updatedOrders;
+                allOrders.sort((a, b) => (b.orderNumber || 0) - (a.orderNumber || 0));
+                
+                const pendingCount = allOrders.filter(o => o.status === 'pending').length;
+                pendingOrdersCount.textContent = pendingCount;
+                
+                filterOrdersByTab();
+            });
+        }
 
-        // Слушаем изменения в localStorage
-        window.addEventListener('storage', function(e) {
-            if (e.key === 'vapeopt_liquids' || e.key === 'vapeopt_consumables' || 
-                e.key === 'vapeopt_pod' || e.key === 'vapeopt_odnorazki' || 
-                e.key === 'vapeopt_snus' || e.key === 'vapeopt_cart') {
-                updateDisplay();
-                updateOrders();
-            }
-        });
+        // ==================== ИНИЦИАЛИЗАЦИЯ ====================
+        async function init() {
+            await updateDisplay();
+            await loadOrders();
+            subscribeToUpdates();
+            initModal();
+        }
 
-        // Обновляем каждые 3 секунды для синхронизации
-        setInterval(() => {
-            updateDisplay();
-            updateOrders();
-        }, 3000);
+        init();
     </script>
 </body>
 </html>

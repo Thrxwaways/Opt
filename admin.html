@@ -9,6 +9,8 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            -webkit-touch-callout: none;
             font-family: 'Orbitron', 'Arial', sans-serif;
         }
 
@@ -22,6 +24,21 @@
             align-items: center;
             justify-content: center;
             padding: 12px;
+        }
+
+        a:focus,
+        button:focus,
+        input:focus {
+            outline: none !important;
+            box-shadow: none !important;
+        }
+
+        :focus {
+            outline: none !important;
+        }
+
+        ::-moz-focus-inner {
+            border: 0;
         }
 
         .ship-hud {
@@ -41,7 +58,6 @@
             overflow: hidden;
         }
 
-        /* Эффект сканирования */
         .ship-hud::before {
             content: '';
             position: absolute;
@@ -59,7 +75,6 @@
             100% { top: 100%; }
         }
 
-        /* Голографические круги */
         .hologram-ring {
             position: absolute;
             top: 50%;
@@ -95,7 +110,6 @@
             to { transform: translate(-50%, -50%) rotate(-360deg); }
         }
 
-        /* Шапка */
         .ship-header {
             display: flex;
             justify-content: space-between;
@@ -155,7 +169,6 @@
             box-shadow: 0 0 30px #3e7bff;
         }
 
-        /* Форма авторизации */
         .auth-container {
             flex: 1;
             display: flex;
@@ -256,7 +269,6 @@
             text-shadow: 0 0 10px #e74c3c;
         }
 
-        /* Нижний дисплей со стрелками */
         .ship-display {
             margin-top: 20px;
             text-align: center;
@@ -366,76 +378,77 @@
     </div>
 
     <script>
-        // Функция для простого хеширования (чтобы не хранить пароль в открытом виде)
-        function simpleHash(str) {
-            let hash = 0;
-            for (let i = 0; i < str.length; i++) {
-                const char = str.charCodeAt(i);
-                hash = ((hash << 5) - hash) + char;
-                hash = hash & hash;
-            }
-            // Преобразуем в положительное число и добавляем соль для надежности
-            return Math.abs(hash).toString(16) + 'salt';
-        }
-
-        // Хеши для логина и пароля (с дополнительной солью)
-        const LOGIN_HASH = simpleHash('DsAyu1718'); // Будет что-то вроде "1a7b3f5dsalt"
-        const PASSWORD_HASH = simpleHash('g@k72%x0htBaTla'); // Будет что-то вроде "c8e9f4b2salt"
-
-        // Функция для проверки учетных данных
-        function checkCredentials(login, password) {
-            try {
-                const loginHash = simpleHash(login);
-                const passwordHash = simpleHash(password);
-                
-                return loginHash === LOGIN_HASH && passwordHash === PASSWORD_HASH;
-            } catch (e) {
-                console.error('Ошибка проверки:', e);
-                return false;
-            }
-        }
-
-        document.getElementById('loginBtn').addEventListener('click', function(e) {
-            e.preventDefault();
+        // ПРОСТАЯ ПРОВЕРКА - РАБОТАЕТ НА ВСЕХ УСТРОЙСТВАХ
+        (function() {
+            // Ваши логин и пароль (можно изменить на свои)
+            const VALID_LOGIN = 'DsAyu1718';
+            const VALID_PASSWORD = 'g@k72%x0htBaTla';
             
-            const login = document.getElementById('login').value;
-            const password = document.getElementById('password').value;
+            // Получаем элементы
+            const loginInput = document.getElementById('login');
+            const passwordInput = document.getElementById('password');
+            const loginBtn = document.getElementById('loginBtn');
             const errorMessage = document.getElementById('errorMessage');
 
-            if (!login || !password) {
-                errorMessage.textContent = 'ЗАПОЛНИТЕ ВСЕ ПОЛЯ';
-                return;
-            }
-
-            if (checkCredentials(login, password)) {
-                // Успешный вход - перенаправляем в админ-панель
-                window.location.href = 'admin-panel.html';
-            } else {
-                errorMessage.textContent = 'ОШИБКА ДОСТУПА';
+            // Функция для показа ошибки
+            function showError(text) {
+                errorMessage.textContent = text;
                 errorMessage.style.animation = 'glowPulse 1s';
                 setTimeout(() => {
                     errorMessage.style.animation = '';
                 }, 1000);
-                
-                // Очищаем поля для безопасности
-                document.getElementById('login').value = '';
-                document.getElementById('password').value = '';
-                document.getElementById('login').focus();
             }
-        });
 
-        // Обработка нажатия Enter
-        document.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
+            // Функция для очистки полей
+            function clearFields() {
+                loginInput.value = '';
+                passwordInput.value = '';
+                loginInput.focus();
+            }
+
+            // Обработчик кнопки входа
+            loginBtn.addEventListener('click', function(e) {
                 e.preventDefault();
-                document.getElementById('loginBtn').click();
-            }
-        });
+                
+                const login = loginInput.value;
+                const password = passwordInput.value;
 
-        // Добавляем обработчик для формы, чтобы предотвратить отправку
-        document.querySelector('.auth-form').addEventListener('submit', function(e) {
-            e.preventDefault();
-        });
+                // Проверка на пустые поля
+                if (!login || !password) {
+                    showError('ЗАПОЛНИТЕ ВСЕ ПОЛЯ');
+                    return;
+                }
+
+                // Прямое сравнение логина и пароля
+                if (login === VALID_LOGIN && password === VALID_PASSWORD) {
+                    // Успешный вход
+                    window.location.href = 'admin-panel.html';
+                } else {
+                    // Неудачный вход
+                    showError('ОШИБКА ДОСТУПА');
+                    clearFields();
+                }
+            });
+
+            // Обработка нажатия Enter
+            document.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    loginBtn.click();
+                }
+            });
+
+            // Предотвращаем отправку формы
+            document.querySelector('.auth-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+            });
+
+            // Убираем автозаполнение
+            setTimeout(() => {
+                loginInput.value = '';
+                passwordInput.value = '';
+            }, 100);
+        })();
     </script>
 </body>
 </html>

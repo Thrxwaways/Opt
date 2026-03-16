@@ -9,44 +9,10 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            -webkit-touch-callout: none;
             font-family: 'Montserrat', 'Orbitron', sans-serif;
         }
-  
-  /* Убирает синий квадрат/подсветку при нажатии на всех элементах */
-* {
-    -webkit-tap-highlight-color: transparent;
-    -webkit-touch-callout: none;
-}
-
-/* Для старых браузеров и дополнительная защита */
-a:focus,
-button:focus,
-div:focus,
-.product-card:focus,
-.cargo-module:focus,
-.modal-item:focus,
-.quantity-btn:focus,
-.back-link:focus,
-.admin-ship:focus,
-.cart-icon:focus {
-    outline: none !important;
-    box-shadow: none !important;
-}
-
-/* Убираем стандартную обводку фокуса во всех браузерах */
-:focus {
-    outline: none !important;
-}
-
-/* Для Firefox */
-::-moz-focus-inner {
-    border: 0;
-}
-
-/* Для IE/Edge */
-::selection {
-    background: transparent;
-}
 
         @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Orbitron:wght@400;700;900&display=swap');
 
@@ -59,6 +25,14 @@ div:focus,
             justify-content: center;
             padding: 12px;
         }
+
+        a:focus, button:focus, div:focus, .product-card:focus, .modal-item:focus, .quantity-btn:focus, .back-link:focus {
+            outline: none !important;
+            box-shadow: none !important;
+        }
+
+        :focus { outline: none !important; }
+        ::-moz-focus-inner { border: 0; }
 
         .ship-hud {
             width: 100%;
@@ -144,21 +118,78 @@ div:focus,
         }
 
         .ship-name {
-            font-size: 2.5rem;
+            font-size: 2rem;
             font-weight: 900;
             color: #8fb8ff;
             text-shadow: 0 0 20px #3e7bff, 0 0 40px #1e4fcf;
-            letter-spacing: 4px;
+            letter-spacing: 3px;
             line-height: 1;
             font-family: 'Orbitron', sans-serif;
+            animation: glowPulse 3s ease-in-out infinite;
         }
 
         .ship-sub {
-            font-size: 0.8rem;
+            font-size: 0.7rem;
             color: #afc9ff;
-            letter-spacing: 4px;
+            letter-spacing: 3px;
             text-transform: uppercase;
             font-family: 'Orbitron', sans-serif;
+        }
+
+        @keyframes glowPulse {
+            0%, 100% { text-shadow: 0 0 20px #3e7bff, 0 0 40px #1e4fcf; }
+            50% { text-shadow: 0 0 30px #5f9eff, 0 0 60px #2f6fdf; }
+        }
+
+        .header-controls {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .cart-icon {
+            position: relative;
+            background: #10213f;
+            border: 2px solid #3e7bff;
+            color: #8fb8ff;
+            width: 45px;
+            height: 45px;
+            border-radius: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            text-decoration: none;
+            box-shadow: 0 0 20px #3e7bff;
+            transition: 0.2s;
+            cursor: pointer;
+        }
+
+        .cart-icon:hover {
+            background: #3e7bff;
+            color: black;
+            transform: scale(1.1);
+        }
+
+        .cart-icon.hidden {
+            display: none;
+        }
+
+        .cart-count {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: #e74c3c;
+            color: white;
+            font-size: 0.7rem;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid #3e7bff;
+            box-shadow: 0 0 10px #e74c3c;
         }
 
         .back-link {
@@ -183,40 +214,14 @@ div:focus,
             content: '◄';
             position: relative;
             z-index: 2;
-            font-weight: normal;
-        }
-
-        .back-link::after {
-            content: '';
-            position: absolute;
-            top: -2px;
-            left: -2px;
-            right: -2px;
-            bottom: -2px;
-            background: linear-gradient(45deg, #3e7bff, #8fb8ff, #3e7bff);
-            border-radius: 27px;
-            opacity: 0;
-            transition: opacity 0.3s;
-            z-index: 1;
         }
 
         .back-link:hover {
             color: black;
             transform: scale(1.1);
-            box-shadow: 0 0 30px #3e7bff;
+            background: #3e7bff;
         }
 
-        .back-link:hover::after {
-            opacity: 1;
-            animation: rotate 1s linear infinite;
-        }
-
-        @keyframes rotate {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
-
-        /* Контейнер с прокруткой */
         .products-scroll {
             flex: 1;
             overflow-y: auto;
@@ -225,7 +230,6 @@ div:focus,
             z-index: 2;
         }
 
-        /* Разделы */
         .section-title {
             font-size: 1.2rem;
             font-weight: 700;
@@ -254,7 +258,6 @@ div:focus,
             border-bottom-color: #a0aec0;
         }
 
-        /* Сетка товаров */
         .products-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -325,7 +328,6 @@ div:focus,
             letter-spacing: 2px;
             box-shadow: 0 0 20px #2ecc71;
             z-index: 3;
-            font-family: 'Montserrat', sans-serif;
         }
 
         .product-image {
@@ -344,7 +346,6 @@ div:focus,
             color: #cfdfff;
             text-align: center;
             margin-bottom: 5px;
-            font-family: 'Montserrat', sans-serif;
         }
 
         .product-price {
@@ -354,16 +355,7 @@ div:focus,
             padding: 3px 10px;
             border-radius: 15px;
             font-weight: 600;
-            font-family: 'Montserrat', sans-serif;
             transition: all 0.3s ease;
-        }
-
-        .out-of-stock-text {
-            font-size: 0.8rem;
-            color: #a0aec0;
-            text-transform: uppercase;
-            margin-top: 5px;
-            font-family: 'Montserrat', sans-serif;
         }
 
         .empty-message {
@@ -374,11 +366,9 @@ div:focus,
             border: 2px dashed #3e7bff;
             border-radius: 30px;
             background: rgba(8, 20, 40, 0.5);
-            font-family: 'Montserrat', sans-serif;
             margin: 20px 0;
         }
 
-        /* Модальное окно */
         .modal {
             position: fixed;
             top: 0;
@@ -410,7 +400,6 @@ div:focus,
             position: relative;
         }
 
-        /* Кнопка закрытия */
         .modal-close-btn {
             position: absolute;
             top: 15px;
@@ -438,7 +427,6 @@ div:focus,
             box-shadow: 0 0 20px #e74c3c;
         }
 
-        /* Верхняя часть с фото и названием */
         .modal-header {
             padding: 20px 25px 10px;
             text-align: center;
@@ -449,7 +437,6 @@ div:focus,
             font-weight: 700;
             color: #8fb8ff;
             margin-bottom: 10px;
-            font-family: 'Montserrat', sans-serif;
             text-transform: uppercase;
             letter-spacing: 2px;
         }
@@ -470,7 +457,6 @@ div:focus,
             transition: 0.3s;
         }
 
-        /* Область скролла с вкусами */
         .modal-scroll-area {
             flex: 1;
             overflow-y: auto;
@@ -478,7 +464,6 @@ div:focus,
             margin-bottom: 5px;
         }
 
-        /* Разделы наличия в модальном окне */
         .stock-section {
             margin-bottom: 15px;
         }
@@ -491,7 +476,6 @@ div:focus,
             padding-bottom: 3px;
             border-bottom: 2px solid;
             font-weight: 600;
-            font-family: 'Montserrat', sans-serif;
         }
 
         .stock-section-title.in-stock {
@@ -504,7 +488,6 @@ div:focus,
             border-bottom-color: #a0aec0;
         }
 
-        /* Список вкусов - уменьшенные блоки */
         .modal-flavors-list {
             display: flex;
             flex-direction: column;
@@ -518,7 +501,6 @@ div:focus,
             cursor: pointer;
             transition: all 0.2s ease;
             position: relative;
-            font-family: 'Montserrat', sans-serif;
             box-shadow: 0 0 15px rgba(62, 123, 255, 0.3);
         }
 
@@ -541,26 +523,11 @@ div:focus,
         }
 
         @keyframes selectedPulse {
-            0% {
-                box-shadow: 0 0 8px rgba(62, 123, 255, 0.6);
-                border-color: #3e7bff;
-            }
-            25% {
-                box-shadow: 0 0 15px rgba(95, 158, 255, 0.7);
-                border-color: #5f9eff;
-            }
-            50% {
-                box-shadow: 0 0 18px rgba(143, 184, 255, 0.8);
-                border-color: #8fb8ff;
-            }
-            75% {
-                box-shadow: 0 0 15px rgba(95, 158, 255, 0.7);
-                border-color: #5f9eff;
-            }
-            100% {
-                box-shadow: 0 0 8px rgba(62, 123, 255, 0.6);
-                border-color: #3e7bff;
-            }
+            0% { box-shadow: 0 0 8px rgba(62, 123, 255, 0.6); border-color: #3e7bff; }
+            25% { box-shadow: 0 0 15px rgba(95, 158, 255, 0.7); border-color: #5f9eff; }
+            50% { box-shadow: 0 0 18px rgba(143, 184, 255, 0.8); border-color: #8fb8ff; }
+            75% { box-shadow: 0 0 15px rgba(95, 158, 255, 0.7); border-color: #5f9eff; }
+            100% { box-shadow: 0 0 8px rgba(62, 123, 255, 0.6); border-color: #3e7bff; }
         }
 
         .modal-flavor-item.out-of-stock {
@@ -580,7 +547,6 @@ div:focus,
             color: #e0f0ff;
             margin-bottom: 4px;
             font-weight: 600;
-            font-family: 'Montserrat', sans-serif;
             text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
         }
 
@@ -592,7 +558,6 @@ div:focus,
             flex-wrap: wrap;
         }
 
-        /* Блок характеристик (крепость + объем + теги) */
         .flavor-attributes {
             display: flex;
             align-items: center;
@@ -600,7 +565,6 @@ div:focus,
             flex-wrap: wrap;
         }
 
-        /* Блок крепости с цветовой индикацией */
         .strength-badge {
             background: linear-gradient(145deg, #2a3a5a, #1a2a4a);
             border: 1px solid;
@@ -613,62 +577,23 @@ div:focus,
             font-weight: 600;
             color: #8fb8ff;
             box-shadow: 0 0 8px rgba(62, 123, 255, 0.4);
-            font-family: 'Montserrat', sans-serif;
             transition: all 0.3s ease;
         }
 
-        /* 0 мг - нет свечения */
-        .strength-badge.strength-1 {
-            border-color: #3e7bff;
-            box-shadow: 0 0 5px rgba(62, 123, 255, 0.2);
-        }
+        .strength-badge.strength-1 { border-color: #3e7bff; box-shadow: 0 0 5px rgba(62, 123, 255, 0.2); }
+        .strength-badge.strength-2 { border-color: #ff6b6b; box-shadow: 0 0 10px rgba(255, 107, 107, 0.4); color: #ffb0b0; }
+        .strength-badge.strength-3 { border-color: #ff4d4d; box-shadow: 0 0 15px rgba(255, 77, 77, 0.6); color: #ffc0c0; }
+        .strength-badge.strength-4 { border-color: #ff1a1a; box-shadow: 0 0 20px rgba(255, 26, 26, 0.8); color: #ffe0e0; }
 
-        /* 20 мг - маленькое красное свечение */
-        .strength-badge.strength-2 {
-            border-color: #ff6b6b;
-            box-shadow: 0 0 10px rgba(255, 107, 107, 0.4);
-            color: #ffb0b0;
-        }
-
-        .strength-badge.strength-2 .strength-value {
-            color: #ffb0b0;
-        }
-
-        .strength-badge.strength-2 .strength-unit {
-            color: #ffb0b0;
-        }
-
-        /* 50 мг - более красное свечение */
-        .strength-badge.strength-3 {
-            border-color: #ff4d4d;
-            box-shadow: 0 0 15px rgba(255, 77, 77, 0.6);
-            color: #ffc0c0;
-        }
-
-        .strength-badge.strength-3 .strength-value {
-            color: #ffc0c0;
-        }
-
-        .strength-badge.strength-3 .strength-unit {
-            color: #ffc0c0;
-        }
-
-        /* 70 мг - ярко-красное свечение */
-        .strength-badge.strength-4 {
-            border-color: #ff1a1a;
-            box-shadow: 0 0 20px rgba(255, 26, 26, 0.8);
-            color: #ffe0e0;
-        }
-
-        .strength-badge.strength-4 .strength-value {
-            color: #ffe0e0;
-        }
-
+        .strength-badge.strength-2 .strength-value,
+        .strength-badge.strength-2 .strength-unit,
+        .strength-badge.strength-3 .strength-value,
+        .strength-badge.strength-3 .strength-unit,
+        .strength-badge.strength-4 .strength-value,
         .strength-badge.strength-4 .strength-unit {
-            color: #ffe0e0;
+            color: currentColor;
         }
 
-        /* Стили для товаров не в наличии - переопределяем все цвета на серый */
         .modal-flavor-item.out-of-stock .strength-badge,
         .modal-flavor-item.out-of-stock .strength-badge.strength-1,
         .modal-flavor-item.out-of-stock .strength-badge.strength-2,
@@ -681,17 +606,10 @@ div:focus,
         }
 
         .modal-flavor-item.out-of-stock .strength-badge .strength-value,
-        .modal-flavor-item.out-of-stock .strength-badge .strength-unit,
-        .modal-flavor-item.out-of-stock .strength-badge.strength-2 .strength-value,
-        .modal-flavor-item.out-of-stock .strength-badge.strength-2 .strength-unit,
-        .modal-flavor-item.out-of-stock .strength-badge.strength-3 .strength-value,
-        .modal-flavor-item.out-of-stock .strength-badge.strength-3 .strength-unit,
-        .modal-flavor-item.out-of-stock .strength-badge.strength-4 .strength-value,
-        .modal-flavor-item.out-of-stock .strength-badge.strength-4 .strength-unit {
+        .modal-flavor-item.out-of-stock .strength-badge .strength-unit {
             color: #a0aec0 !important;
         }
 
-        /* Блок объема */
         .volume-badge {
             background: linear-gradient(145deg, #2a3a4a, #1a2a3a);
             border: 1px solid #5f9eff;
@@ -704,21 +622,11 @@ div:focus,
             font-weight: 600;
             color: #8fb8ff;
             box-shadow: 0 0 8px rgba(62, 123, 255, 0.4);
-            font-family: 'Montserrat', sans-serif;
         }
 
-        .volume-value {
-            color: #ffffff;
-            font-weight: 700;
-        }
+        .volume-value { color: #ffffff; font-weight: 700; }
+        .volume-unit { color: #8fb8ff; font-size: 0.65rem; opacity: 0.8; }
 
-        .volume-unit {
-            color: #8fb8ff;
-            font-size: 0.65rem;
-            opacity: 0.8;
-        }
-
-        /* Блок ICE */
         .ice-badge {
             background: linear-gradient(145deg, #1a4a5a, #0f3a4a);
             border: 1px solid #5fd0ff;
@@ -731,12 +639,9 @@ div:focus,
             font-weight: 700;
             color: #a0e0ff;
             box-shadow: 0 0 8px rgba(95, 208, 255, 0.5);
-            font-family: 'Montserrat', sans-serif;
             text-transform: uppercase;
-            letter-spacing: 1px;
         }
 
-        /* Блок SOUR */
         .sour-badge {
             background: linear-gradient(145deg, #3a5a2a, #2a4a1a);
             border: 1px solid #a0ff5f;
@@ -749,12 +654,9 @@ div:focus,
             font-weight: 700;
             color: #d0ffa0;
             box-shadow: 0 0 8px rgba(160, 255, 95, 0.5);
-            font-family: 'Montserrat', sans-serif;
             text-transform: uppercase;
-            letter-spacing: 1px;
         }
 
-        /* Стили для товаров не в наличии - переопределяем все цвета на серый */
         .modal-flavor-item.out-of-stock .volume-badge,
         .modal-flavor-item.out-of-stock .ice-badge,
         .modal-flavor-item.out-of-stock .sour-badge {
@@ -764,12 +666,6 @@ div:focus,
             box-shadow: none;
         }
 
-        .modal-flavor-item.out-of-stock .volume-value,
-        .modal-flavor-item.out-of-stock .volume-unit {
-            color: #a0aec0;
-        }
-
-        /* Блок выбора количества */
         .quantity-selector {
             display: none;
             align-items: center;
@@ -782,14 +678,8 @@ div:focus,
         }
 
         @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: scale(0.9);
-            }
-            to {
-                opacity: 1;
-                transform: scale(1);
-            }
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
         }
 
         .quantity-selector.show {
@@ -825,7 +715,6 @@ div:focus,
             padding: 2px;
             text-align: center;
             color: #8fb8ff;
-            font-family: 'Montserrat', sans-serif;
             font-size: 0.8rem;
             font-weight: 600;
         }
@@ -835,7 +724,6 @@ div:focus,
             box-shadow: 0 0 8px #3e7bff;
         }
 
-        /* Нижняя панель (уменьшенная) */
         .modal-footer {
             background: rgba(8, 20, 40, 0.95);
             backdrop-filter: blur(10px);
@@ -859,14 +747,12 @@ div:focus,
             font-size: 0.7rem;
             text-transform: uppercase;
             letter-spacing: 1px;
-            font-family: 'Montserrat', sans-serif;
         }
 
         .price-value {
             color: #2ecc71;
             font-size: 1.1rem;
             font-weight: 800;
-            font-family: 'Montserrat', sans-serif;
             text-shadow: 0 0 8px #2ecc71;
         }
 
@@ -889,7 +775,6 @@ div:focus,
             border-radius: 22px;
             cursor: pointer;
             transition: all 0.3s ease;
-            font-family: 'Montserrat', sans-serif;
             box-shadow: 0 0 10px rgba(46, 204, 113, 0.3);
         }
 
@@ -900,7 +785,6 @@ div:focus,
             box-shadow: 0 0 15px #2ecc71;
         }
 
-        /* Уведомления */
         .notification {
             position: fixed;
             top: 20px;
@@ -954,7 +838,7 @@ div:focus,
         }
 
         @media (max-width: 400px) {
-            .ship-name { font-size: 2rem; }
+            .ship-name { font-size: 1.8rem; }
             .product-image { width: 60px; height: 60px; }
             .modal-footer { flex-direction: column; gap: 8px; }
             .modal-order-btn { width: 100%; }
@@ -974,7 +858,13 @@ div:focus,
                 <div class="ship-name">VAPEOPT</div>
                 <div class="ship-sub">КАТАЛОГ ЖИДКОСТЕЙ</div>
             </div>
-            <a href="index.html" class="back-link" title="Назад"></a>
+            <div class="header-controls">
+                <div class="cart-icon hidden" id="cartIcon" onclick="window.location.href='index.html#cart'">
+                    🛒
+                    <span class="cart-count" id="cartCount">0</span>
+                </div>
+                <a href="index.html" class="back-link" title="Назад"></a>
+            </div>
         </div>
 
         <div class="products-scroll" id="productsContainer">
@@ -982,7 +872,6 @@ div:focus,
         </div>
     </div>
 
-    <!-- Уведомления -->
     <div class="notification" id="notification">
         <div class="notification-content">
             <span class="notification-icon" id="notificationIcon">⚡</span>
@@ -990,7 +879,6 @@ div:focus,
         </div>
     </div>
 
-    <!-- Модальное окно товара -->
     <div class="modal" id="productModal">
         <div class="modal-content">
             <button class="modal-close-btn" id="modalCloseBtn">✕</button>
@@ -1012,43 +900,42 @@ div:focus,
                     <span class="price-value" id="modalPrice">0</span>
                     <span class="price-currency">BYN</span>
                 </div>
-                <button class="modal-order-btn" id="modalOrderBtn">ЗАКАЗАТЬ</button>
+                <button class="modal-order-btn" id="modalOrderBtn">В КОРЗИНУ</button>
             </div>
         </div>
     </div>
 
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+    <script src="firebase-config.js"></script>
+
+    <!-- Скрипт корзины -->
+    <script src="cart-script.js"></script>
+
     <script>
-        // Загружаем товары из localStorage
-        let liquids = JSON.parse(localStorage.getItem('vapeopt_liquids')) || [];
+        // Константа для коллекции
+        const COLLECTION_NAME = 'liquids';
+        
+        let products = [];
         let currentProductIndex = -1;
         let selectedFlavorIndex = -1;
 
-        // Функция показа уведомления
-        function showNotification(message, type = 'warning') {
-            const notification = document.getElementById('notification');
-            const icon = document.getElementById('notificationIcon');
-            const messageEl = document.getElementById('notificationMessage');
-            
-            notification.className = 'notification show ' + type;
-            
-            if (type === 'warning') {
-                icon.textContent = '⚠️';
-            } else if (type === 'error') {
-                icon.textContent = '❌';
-            } else {
-                icon.textContent = '✅';
+        // Загрузка товаров из Firebase
+        async function loadProducts() {
+            try {
+                products = await FirestoreService.getCollection(COLLECTION_NAME);
+                displayProducts();
+            } catch (error) {
+                console.error('Ошибка загрузки:', error);
+                products = [];
+                displayProducts();
             }
-            
-            messageEl.textContent = message;
-            
-            setTimeout(() => {
-                notification.classList.remove('show');
-            }, 3000);
         }
 
         // Функция для получения текста крепости
         function getStrengthText(strength) {
-            switch(strength) {
+            switch(parseInt(strength)) {
                 case 1: return '0';
                 case 2: return '20';
                 case 3: return '50';
@@ -1057,9 +944,8 @@ div:focus,
             }
         }
 
-        // Функция для получения класса крепости
         function getStrengthClass(strength) {
-            switch(strength) {
+            switch(parseInt(strength)) {
                 case 1: return 'strength-1';
                 case 2: return 'strength-2';
                 case 3: return 'strength-3';
@@ -1068,42 +954,39 @@ div:focus,
             }
         }
 
-        // Функция для отображения товаров
         function displayProducts() {
             const container = document.getElementById('productsContainer');
             
-            if (liquids.length === 0) {
+            if (products.length === 0) {
                 container.innerHTML = '<div class="empty-message">НА ДАННЫЙ МОМЕНТ ТОВАРОВ НЕТ</div>';
                 return;
             }
 
-            // Разделяем товары на "в наличии" и "нет в наличии"
-            const inStockProducts = liquids.filter(liquid => 
-                liquid.flavors && liquid.flavors.some(f => f.inStock !== false)
+            const inStockProducts = products.filter(product => 
+                product.flavors && product.flavors.some(f => f.inStock !== false)
             );
             
-            const outOfStockProducts = liquids.filter(liquid => 
-                !liquid.flavors || !liquid.flavors.some(f => f.inStock !== false)
+            const outOfStockProducts = products.filter(product => 
+                !product.flavors || !product.flavors.some(f => f.inStock !== false)
             );
 
             let html = '';
 
-            // Блок "В наличии"
             if (inStockProducts.length > 0) {
                 html += '<div class="section-title in-stock">✔ В НАЛИЧИИ</div>';
                 html += '<div class="products-grid">';
                 
-                inStockProducts.forEach((liquid, index) => {
-                    const originalIndex = liquids.findIndex(l => l.name === liquid.name && l.price === liquid.price);
+                inStockProducts.forEach((product, index) => {
+                    const originalIndex = products.findIndex(p => p.id === product.id);
                     
                     html += `
-                        <div class="product-card ${liquid.isNew ? 'new-item' : ''}" onclick="openProductModal(${originalIndex})">
-                            <img src="${liquid.image || 'https://via.placeholder.com/80x80/10213f/3e7bff?text=' + encodeURIComponent(liquid.name.substring(0, 3))}" 
-                                 alt="${liquid.name}" 
+                        <div class="product-card ${product.isNew ? 'new-item' : ''}" onclick="openProductModal(${originalIndex})">
+                            <img src="${product.image || 'https://via.placeholder.com/80x80/10213f/3e7bff?text=' + encodeURIComponent((product.name || 'Товар').substring(0, 3))}" 
+                                 alt="${product.name}" 
                                  class="product-image"
                                  onerror="this.src='https://via.placeholder.com/80x80/10213f/3e7bff?text=Нет+фото'">
-                            <div class="product-name">${liquid.name}</div>
-                            <div class="product-price">${liquid.price} BYN</div>
+                            <div class="product-name">${product.name || 'Без названия'}</div>
+                            <div class="product-price">${product.price || 0} BYN</div>
                         </div>
                     `;
                 });
@@ -1111,22 +994,21 @@ div:focus,
                 html += '</div>';
             }
 
-            // Блок "Нет в наличии"
             if (outOfStockProducts.length > 0) {
                 html += '<div class="section-title out-of-stock">✖ НЕТ В НАЛИЧИИ</div>';
                 html += '<div class="products-grid">';
                 
-                outOfStockProducts.forEach((liquid, index) => {
-                    const originalIndex = liquids.findIndex(l => l.name === liquid.name && l.price === liquid.price);
+                outOfStockProducts.forEach((product, index) => {
+                    const originalIndex = products.findIndex(p => p.id === product.id);
                     
                     html += `
                         <div class="product-card out-of-stock" onclick="showOutOfStockNotification()">
-                            <img src="${liquid.image || 'https://via.placeholder.com/80x80/4a5568/718096?text=' + encodeURIComponent(liquid.name.substring(0, 3))}" 
-                                 alt="${liquid.name}" 
+                            <img src="${product.image || 'https://via.placeholder.com/80x80/4a5568/718096?text=' + encodeURIComponent((product.name || 'Товар').substring(0, 3))}" 
+                                 alt="${product.name}" 
                                  class="product-image"
                                  onerror="this.src='https://via.placeholder.com/80x80/4a5568/718096?text=Нет+фото'">
-                            <div class="product-name">${liquid.name}</div>
-                            <div class="product-price">${liquid.price} BYN</div>
+                            <div class="product-name">${product.name || 'Без названия'}</div>
+                            <div class="product-price">${product.price || 0} BYN</div>
                         </div>
                     `;
                 });
@@ -1137,83 +1019,54 @@ div:focus,
             container.innerHTML = html;
         }
 
-        // Функция для уведомления об отсутствии товара
         window.showOutOfStockNotification = function() {
             showNotification('Товара нет в наличии', 'error');
         };
 
-// Функция для обработки выбора вкуса
-window.selectFlavor = function(index, event) {
-    // Останавливаем всплытие события
-    if (event) {
-        event.stopPropagation();
-    }
-    
-    const liquid = liquids[currentProductIndex];
-    if (!liquid || !liquid.flavors[index] || liquid.flavors[index].inStock === false) return;
-    
-    // Если кликнули на тот же самый вкус - отменяем выбор
-    if (selectedFlavorIndex === index) {
-        selectedFlavorIndex = -1;
-    } else {
-        // Иначе выбираем новый вкус
-        selectedFlavorIndex = index;
-    }
-    
-    // Обновляем отображение модального окна
-    openProductModal(currentProductIndex);
-};
+        window.selectFlavor = function(index, event) {
+            if (event) event.stopPropagation();
+            
+            const product = products[currentProductIndex];
+            if (!product || !product.flavors || !product.flavors[index] || product.flavors[index].inStock === false) return;
+            
+            selectedFlavorIndex = selectedFlavorIndex === index ? -1 : index;
+            openProductModal(currentProductIndex);
+        };
 
-        // Функции для работы с количеством
         window.updateQuantity = function(flavorIndex, change, event) {
-            // Останавливаем всплытие события
-            if (event) {
-                event.stopPropagation();
-            }
+            if (event) event.stopPropagation();
             
-            const liquid = liquids[currentProductIndex];
-            if (!liquid) return;
+            const product = products[currentProductIndex];
+            if (!product || !product.flavors || !product.flavors[flavorIndex]) return;
             
-            const flavor = liquid.flavors[flavorIndex];
-            if (!flavor) return;
-            
+            const flavor = product.flavors[flavorIndex];
             flavor.quantity = Math.max(1, (flavor.quantity || 1) + change);
             
             const input = document.getElementById(`quantity-${flavorIndex}`);
             if (input) input.value = flavor.quantity;
-            
-            localStorage.setItem('vapeopt_liquids', JSON.stringify(liquids));
         };
 
         window.setQuantity = function(flavorIndex, value, event) {
-            // Останавливаем всплытие события
-            if (event) {
-                event.stopPropagation();
-            }
+            if (event) event.stopPropagation();
             
-            const liquid = liquids[currentProductIndex];
-            if (!liquid) return;
+            const product = products[currentProductIndex];
+            if (!product || !product.flavors || !product.flavors[flavorIndex]) return;
             
-            const flavor = liquid.flavors[flavorIndex];
-            if (!flavor) return;
-            
+            const flavor = product.flavors[flavorIndex];
             const num = parseInt(value) || 1;
             flavor.quantity = Math.max(1, num);
-            
-            localStorage.setItem('vapeopt_liquids', JSON.stringify(liquids));
         };
 
-        // Открытие модального окна с деталями товара
         window.openProductModal = function(index) {
-            const liquid = liquids[index];
+            const product = products[index];
+            if (!product) return;
+            
             currentProductIndex = index;
             
-            // Сбрасываем все количества на 1 при открытии
-            if (liquid.flavors) {
-                liquid.flavors.forEach(flavor => {
+            if (product.flavors) {
+                product.flavors.forEach(flavor => {
                     flavor.quantity = 1;
                 });
-                localStorage.setItem('vapeopt_liquids', JSON.stringify(liquids));
             }
             
             const modal = document.getElementById('productModal');
@@ -1222,18 +1075,16 @@ window.selectFlavor = function(index, event) {
             const modalProductName = document.getElementById('modalProductName');
             const modalFlavorsContainer = document.getElementById('modalFlavorsContainer');
 
-            modalImage.src = liquid.image || 'https://via.placeholder.com/150x150/10213f/3e7bff?text=' + encodeURIComponent(liquid.name.substring(0, 3));
-            modalImage.alt = liquid.name;
-            modalPrice.textContent = liquid.price;
-            modalProductName.textContent = liquid.name;
+            modalImage.src = product.image || 'https://via.placeholder.com/150x150/10213f/3e7bff?text=' + encodeURIComponent((product.name || 'Товар').substring(0, 3));
+            modalImage.alt = product.name;
+            modalPrice.textContent = product.price || 0;
+            modalProductName.textContent = product.name || 'Без названия';
             
-            // Разделяем вкусы на "в наличии" и "нет в наличии"
-            const inStockFlavors = liquid.flavors ? liquid.flavors.filter(f => f.inStock !== false) : [];
-            const outOfStockFlavors = liquid.flavors ? liquid.flavors.filter(f => f.inStock === false) : [];
+            const inStockFlavors = product.flavors ? product.flavors.filter(f => f.inStock !== false) : [];
+            const outOfStockFlavors = product.flavors ? product.flavors.filter(f => f.inStock === false) : [];
             
             let flavorsHtml = '';
             
-            // Блок "В наличии"
             if (inStockFlavors.length > 0) {
                 flavorsHtml += `
                     <div class="stock-section">
@@ -1242,7 +1093,7 @@ window.selectFlavor = function(index, event) {
                 `;
                 
                 inStockFlavors.forEach((flavor, fIndex) => {
-                    const originalIndex = liquid.flavors.findIndex(f => f.name === flavor.name && f.strength === flavor.strength);
+                    const originalIndex = product.flavors.findIndex(f => f.name === flavor.name && f.strength === flavor.strength);
                     const strengthValue = getStrengthText(flavor.strength || 1);
                     const strengthClass = getStrengthClass(flavor.strength || 1);
                     const isSelected = selectedFlavorIndex === originalIndex;
@@ -1251,7 +1102,7 @@ window.selectFlavor = function(index, event) {
                     
                     flavorsHtml += `
                         <div class="modal-flavor-item in-stock ${isSelected ? 'selected' : ''}" onclick="selectFlavor(${originalIndex}, event)">
-                            <div class="flavor-name">${flavor.name}</div>
+                            <div class="flavor-name">${flavor.name || 'Без названия'}</div>
                             <div class="flavor-details">
                                 <div class="flavor-attributes">
                                     <div class="strength-badge ${strengthClass}">
@@ -1280,7 +1131,6 @@ window.selectFlavor = function(index, event) {
                 flavorsHtml += `</div></div>`;
             }
             
-            // Блок "Нет в наличии"
             if (outOfStockFlavors.length > 0) {
                 flavorsHtml += `
                     <div class="stock-section">
@@ -1295,7 +1145,7 @@ window.selectFlavor = function(index, event) {
                     
                     flavorsHtml += `
                         <div class="modal-flavor-item out-of-stock">
-                            <div class="flavor-name">${flavor.name}</div>
+                            <div class="flavor-name">${flavor.name || 'Без названия'}</div>
                             <div class="flavor-details">
                                 <div class="flavor-attributes">
                                     <div class="strength-badge">
@@ -1321,98 +1171,58 @@ window.selectFlavor = function(index, event) {
             modal.classList.add('show');
         };
 
-        // Добавление в корзину
-        document.getElementById('modalOrderBtn').addEventListener('click', function() {
+        function addToCart() {
             if (selectedFlavorIndex === -1) {
                 showNotification('Выберите вкус', 'warning');
                 return;
             }
             
-            const liquid = liquids[currentProductIndex];
-            const flavor = liquid.flavors[selectedFlavorIndex];
+            const product = products[currentProductIndex];
+            const flavor = product.flavors[selectedFlavorIndex];
             
             if (!flavor || flavor.quantity <= 0) {
                 showNotification('Укажите количество', 'warning');
                 return;
             }
 
-            // Получаем текущую корзину
-            let cart = JSON.parse(localStorage.getItem('vapeopt_cart')) || [];
-            
-            // Формируем элемент корзины
-            const cartItem = {
-                id: Date.now() + Math.random(),
-                productId: currentProductIndex,
-                flavorIndex: selectedFlavorIndex,
-                name: liquid.name,
-                flavorName: flavor.name,
-                strength: flavor.strength,
-                volume: flavor.volume,
-                tag: flavor.tag,
-                price: liquid.price,
-                quantity: flavor.quantity,
-                image: liquid.image
-            };
-
-            cart.push(cartItem);
-            localStorage.setItem('vapeopt_cart', JSON.stringify(cart));
-
-            // Сбрасываем количество на 1 после добавления в корзину
-            flavor.quantity = 1;
-            localStorage.setItem('vapeopt_liquids', JSON.stringify(liquids));
-
-            // Показываем уведомление об успехе
-            showNotification('Товар добавлен в корзину', 'success');
-
-            // Сбрасываем выбранный вкус
-            selectedFlavorIndex = -1;
-
-            // Обновляем отображение
-            if (currentProductIndex !== -1) {
-                openProductModal(currentProductIndex);
+            if (window.addLiquidToCart) {
+                window.addLiquidToCart(product, flavor, flavor.quantity);
+                closeModal();
             }
+        }
 
-            // Оповещаем другие страницы об изменениях
-            window.dispatchEvent(new StorageEvent('storage', {
-                key: 'vapeopt_cart',
-                newValue: JSON.stringify(cart)
-            }));
-        });
-
-        // Закрытие модального окна
         function closeModal() {
             document.getElementById('productModal').classList.remove('show');
-            // Сбрасываем все количества на 1 при закрытии
-            if (currentProductIndex !== -1) {
-                const liquid = liquids[currentProductIndex];
-                if (liquid && liquid.flavors) {
-                    liquid.flavors.forEach(flavor => {
-                        flavor.quantity = 1;
-                    });
-                    localStorage.setItem('vapeopt_liquids', JSON.stringify(liquids));
-                }
+            if (currentProductIndex !== -1 && products[currentProductIndex] && products[currentProductIndex].flavors) {
+                products[currentProductIndex].flavors.forEach(flavor => {
+                    flavor.quantity = 1;
+                });
             }
             selectedFlavorIndex = -1;
         }
 
-        document.getElementById('modalCloseBtn').addEventListener('click', closeModal);
-        
-        document.getElementById('productModal').addEventListener('click', (e) => {
-            if (e.target === document.getElementById('productModal')) {
-                closeModal();
-            }
-        });
-
-        // Инициализация
-        displayProducts();
-
-        // Слушаем изменения из других страниц
-        window.addEventListener('storage', function(e) {
-            if (e.key === 'vapeopt_liquids') {
-                liquids = JSON.parse(e.newValue || '[]');
+        function subscribeToUpdates() {
+            FirestoreService.subscribeToCollection(COLLECTION_NAME, (updatedProducts) => {
+                products = updatedProducts;
                 displayProducts();
-            }
-        });
+            });
+        }
+
+        async function init() {
+            await loadProducts();
+            subscribeToUpdates();
+
+            document.getElementById('modalCloseBtn').addEventListener('click', closeModal);
+            document.getElementById('modalOrderBtn').addEventListener('click', addToCart);
+            
+            document.getElementById('productModal').addEventListener('click', (e) => {
+                if (e.target === document.getElementById('productModal')) {
+                    closeModal();
+                }
+            });
+        }
+
+        init();
     </script>
 </body>
 </html>

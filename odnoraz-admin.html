@@ -9,44 +9,10 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            -webkit-touch-callout: none;
             font-family: 'Orbitron', 'Arial', sans-serif;
         }
-
-/* Убирает синий квадрат/подсветку при нажатии на всех элементах */
-* {
-    -webkit-tap-highlight-color: transparent;
-    -webkit-touch-callout: none;
-}
-
-/* Для старых браузеров и дополнительная защита */
-a:focus,
-button:focus,
-div:focus,
-.product-card:focus,
-.cargo-module:focus,
-.modal-item:focus,
-.quantity-btn:focus,
-.back-link:focus,
-.admin-ship:focus,
-.cart-icon:focus {
-    outline: none !important;
-    box-shadow: none !important;
-}
-
-/* Убираем стандартную обводку фокуса во всех браузерах */
-:focus {
-    outline: none !important;
-}
-
-/* Для Firefox */
-::-moz-focus-inner {
-    border: 0;
-}
-
-/* Для IE/Edge */
-::selection {
-    background: transparent;
-}
 
         @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap');
 
@@ -58,6 +24,25 @@ div:focus,
             align-items: center;
             justify-content: center;
             padding: 12px;
+        }
+
+        a:focus,
+        button:focus,
+        div:focus,
+        .product-card:focus,
+        .modal-item:focus,
+        .quantity-btn:focus,
+        .back-link:focus {
+            outline: none !important;
+            box-shadow: none !important;
+        }
+
+        :focus {
+            outline: none !important;
+        }
+
+        ::-moz-focus-inner {
+            border: 0;
         }
 
         .ship-hud {
@@ -280,7 +265,6 @@ div:focus,
             box-shadow: 0 0 10px #e74c3c;
         }
 
-        /* Модальное окно */
         .modal {
             position: fixed;
             top: 0;
@@ -372,7 +356,6 @@ div:focus,
             color: black;
         }
 
-        /* Стили для формы */
         .form-section {
             margin-bottom: 25px;
             border: 1px solid #3e7bff40;
@@ -390,7 +373,6 @@ div:focus,
             padding-left: 10px;
         }
 
-        /* Блок загрузки фото */
         .image-upload-area {
             display: flex;
             flex-direction: column;
@@ -466,7 +448,6 @@ div:focus,
             margin-top: 5px;
         }
 
-        /* Поля ввода */
         .input-group {
             margin-bottom: 15px;
         }
@@ -503,7 +484,6 @@ div:focus,
             color: #3e5a80;
         }
 
-        /* Блок товаров */
         .items-container {
             display: flex;
             flex-direction: column;
@@ -588,7 +568,6 @@ div:focus,
             color: #3e5a80;
         }
 
-        /* Поле для количества затяжек */
         .puffs-input {
             background: rgba(8, 20, 40, 0.7);
             border: 2px solid #3e7bff;
@@ -606,7 +585,6 @@ div:focus,
             color: #3e5a80;
         }
 
-        /* Чекбокс наличия для товара */
         .item-stock-checkbox {
             display: flex;
             align-items: center;
@@ -679,7 +657,6 @@ div:focus,
             border-style: solid;
         }
 
-        /* Кастомные чекбоксы для новинки и наличия */
         .checkbox-group {
             display: flex;
             gap: 30px;
@@ -734,7 +711,6 @@ div:focus,
             letter-spacing: 1px;
         }
 
-        /* Кнопка сохранения */
         .save-btn {
             width: 100%;
             background: #10213f;
@@ -856,24 +832,45 @@ div:focus,
         </div>
     </div>
 
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+    <script src="firebase-config.js"></script>
+
     <script>
-        let products = JSON.parse(localStorage.getItem('vapeopt_odnorazki')) || [];
+        // Константа для коллекции
+        const COLLECTION_NAME = 'disposables';
+        
+        let products = [];
         let editingIndex = -1;
 
-        // Функция для снятия всех галочек "в наличии" у модификаций
-        function uncheckAllItemsStock() {
-            const itemCheckboxes = document.querySelectorAll('.item-instock');
-            itemCheckboxes.forEach(checkbox => {
-                checkbox.checked = false;
-            });
+        // Загрузка товаров из Firebase
+        async function loadProducts() {
+            try {
+                products = await FirestoreService.getCollection(COLLECTION_NAME);
+                displayProducts();
+            } catch (error) {
+                console.error('Ошибка загрузки:', error);
+                products = [];
+                displayProducts();
+            }
         }
 
-        // Функция отображения товаров
+        // Сохранение товаров в Firebase
+        async function saveProducts() {
+            try {
+                await FirestoreService.replaceCollection(COLLECTION_NAME, products);
+                console.log('Товары успешно сохранены в Firebase');
+            } catch (error) {
+                console.error('Ошибка сохранения:', error);
+                alert('Ошибка при сохранении в Firebase');
+            }
+        }
+
         function displayProducts() {
             const grid = document.getElementById('productsGrid');
             grid.innerHTML = '';
 
-            // Карточка добавления
             const addCard = document.createElement('div');
             addCard.className = 'product-card add-card';
             addCard.innerHTML = `
@@ -883,7 +880,6 @@ div:focus,
             addCard.onclick = () => openModal('add');
             grid.appendChild(addCard);
 
-            // Карточки товаров
             products.forEach((product, index) => {
                 const card = document.createElement('div');
                 card.className = 'product-card';
@@ -891,11 +887,11 @@ div:focus,
                 const hasStock = product.items ? product.items.some(item => item.inStock) : true;
                 
                 card.innerHTML = `
-                    <img src="${product.image || 'https://via.placeholder.com/70x70/10213f/3e7bff?text=' + encodeURIComponent(product.name.substring(0, 3))}" 
+                    <img src="${product.image || 'https://via.placeholder.com/70x70/10213f/3e7bff?text=' + encodeURIComponent((product.name || 'Товар').substring(0, 3))}" 
                          class="product-image"
                          onerror="this.src='https://via.placeholder.com/70x70/10213f/3e7bff?text=Нет+фото'">
-                    <div class="product-name">${product.name}</div>
-                    <div class="product-price">${product.price} BYN</div>
+                    <div class="product-name">${product.name || 'Без названия'}</div>
+                    <div class="product-price">${product.price || 0} BYN</div>
                     ${product.isNew ? '<div class="new-badge">NEW</div>' : ''}
                     ${!hasStock ? '<div class="out-of-stock-badge">НЕТ</div>' : ''}
                 `;
@@ -905,7 +901,6 @@ div:focus,
             });
         }
 
-        // Открытие модального окна
         function openModal(mode, index = -1) {
             const modal = document.getElementById('productModal');
             const modalTitle = document.getElementById('modalTitle');
@@ -939,7 +934,6 @@ div:focus,
                     fileName.textContent = 'Файл не выбран';
                 }
 
-                // Загружаем модификации
                 itemsContainer.innerHTML = '';
                 if (product.items && product.items.length > 0) {
                     product.items.forEach(item => {
@@ -965,7 +959,6 @@ div:focus,
             modal.classList.add('show');
         }
 
-        // Добавление строки модификации
         function addItemRow(name = '', strength = '', puffs = '', itemInStock = true) {
             const container = document.getElementById('itemsContainer');
             const row = document.createElement('div');
@@ -991,14 +984,6 @@ div:focus,
             container.appendChild(row);
         }
 
-        // Обработчик изменения чекбокса "В наличии" у товара
-        document.getElementById('inStock').addEventListener('change', function(e) {
-            if (!e.target.checked) {
-                uncheckAllItemsStock();
-            }
-        });
-
-        // Загрузка изображения
         document.getElementById('imageInput').addEventListener('change', function(e) {
             const file = e.target.files[0];
             const fileName = document.getElementById('fileName');
@@ -1019,8 +1004,7 @@ div:focus,
             }
         });
 
-        // Сохранение товара
-        document.getElementById('saveBtn').addEventListener('click', function() {
+        document.getElementById('saveBtn').addEventListener('click', async function() {
             const productName = document.getElementById('productName').value.trim();
             const productPrice = parseFloat(document.getElementById('productPrice').value);
             const isNew = document.getElementById('isNew').checked;
@@ -1037,7 +1021,6 @@ div:focus,
                 return;
             }
 
-            // Собираем модификации
             const itemRows = document.querySelectorAll('#itemsContainer .item-row');
             const items = [];
             let hasValidItem = false;
@@ -1085,37 +1068,23 @@ div:focus,
                 products.push(product);
             }
 
-            localStorage.setItem('vapeopt_odnorazki', JSON.stringify(products));
-            
-            window.dispatchEvent(new StorageEvent('storage', {
-                key: 'vapeopt_odnorazki',
-                newValue: JSON.stringify(products)
-            }));
+            await saveProducts();
             
             document.getElementById('productModal').classList.remove('show');
             displayProducts();
         });
 
-        // Удаление товара
-        document.getElementById('deleteBtn').addEventListener('click', function() {
+        document.getElementById('deleteBtn').addEventListener('click', async function() {
             if (editingIndex >= 0 && confirm('Удалить этот товар?')) {
                 products.splice(editingIndex, 1);
-                localStorage.setItem('vapeopt_odnorazki', JSON.stringify(products));
-                
-                window.dispatchEvent(new StorageEvent('storage', {
-                    key: 'vapeopt_odnorazki',
-                    newValue: JSON.stringify(products)
-                }));
-                
+                await saveProducts();
                 document.getElementById('productModal').classList.remove('show');
                 displayProducts();
             }
         });
 
-        // Добавление новой модификации
         document.getElementById('addItemBtn').addEventListener('click', () => addItemRow());
 
-        // Закрытие модального окна
         document.getElementById('closeModal').addEventListener('click', () => {
             document.getElementById('productModal').classList.remove('show');
         });
@@ -1126,16 +1095,19 @@ div:focus,
             }
         });
 
-        // Инициализация
-        displayProducts();
-
-        // Слушаем изменения из других страниц
-        window.addEventListener('storage', function(e) {
-            if (e.key === 'vapeopt_odnorazki') {
-                products = JSON.parse(e.newValue || '[]');
+        function subscribeToUpdates() {
+            FirestoreService.subscribeToCollection(COLLECTION_NAME, (updatedProducts) => {
+                products = updatedProducts;
                 displayProducts();
-            }
-        });
+            });
+        }
+
+        async function init() {
+            await loadProducts();
+            subscribeToUpdates();
+        }
+
+        init();
     </script>
 </body>
 </html>

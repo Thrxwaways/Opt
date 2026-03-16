@@ -9,44 +9,10 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            -webkit-touch-callout: none;
             font-family: 'Montserrat', 'Orbitron', sans-serif;
         }
-
-/* Убирает синий квадрат/подсветку при нажатии на всех элементах */
-* {
-    -webkit-tap-highlight-color: transparent;
-    -webkit-touch-callout: none;
-}
-
-/* Для старых браузеров и дополнительная защита */
-a:focus,
-button:focus,
-div:focus,
-.product-card:focus,
-.cargo-module:focus,
-.modal-item:focus,
-.quantity-btn:focus,
-.back-link:focus,
-.admin-ship:focus,
-.cart-icon:focus {
-    outline: none !important;
-    box-shadow: none !important;
-}
-
-/* Убираем стандартную обводку фокуса во всех браузерах */
-:focus {
-    outline: none !important;
-}
-
-/* Для Firefox */
-::-moz-focus-inner {
-    border: 0;
-}
-
-/* Для IE/Edge */
-::selection {
-    background: transparent;
-}
 
         @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Orbitron:wght@400;700;900&display=swap');
 
@@ -59,6 +25,14 @@ div:focus,
             justify-content: center;
             padding: 12px;
         }
+
+        a:focus, button:focus, div:focus, .product-card:focus, .modal-item:focus, .quantity-btn:focus, .back-link:focus {
+            outline: none !important;
+            box-shadow: none !important;
+        }
+
+        :focus { outline: none !important; }
+        ::-moz-focus-inner { border: 0; }
 
         .ship-hud {
             width: 100%;
@@ -144,21 +118,78 @@ div:focus,
         }
 
         .ship-name {
-            font-size: 2.5rem;
+            font-size: 2rem;
             font-weight: 900;
             color: #8fb8ff;
             text-shadow: 0 0 20px #3e7bff, 0 0 40px #1e4fcf;
-            letter-spacing: 4px;
+            letter-spacing: 3px;
             line-height: 1;
             font-family: 'Orbitron', sans-serif;
+            animation: glowPulse 3s ease-in-out infinite;
         }
 
         .ship-sub {
-            font-size: 0.8rem;
+            font-size: 0.7rem;
             color: #afc9ff;
-            letter-spacing: 4px;
+            letter-spacing: 3px;
             text-transform: uppercase;
             font-family: 'Orbitron', sans-serif;
+        }
+
+        @keyframes glowPulse {
+            0%, 100% { text-shadow: 0 0 20px #3e7bff, 0 0 40px #1e4fcf; }
+            50% { text-shadow: 0 0 30px #5f9eff, 0 0 60px #2f6fdf; }
+        }
+
+        .header-controls {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .cart-icon {
+            position: relative;
+            background: #10213f;
+            border: 2px solid #3e7bff;
+            color: #8fb8ff;
+            width: 45px;
+            height: 45px;
+            border-radius: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            text-decoration: none;
+            box-shadow: 0 0 20px #3e7bff;
+            transition: 0.2s;
+            cursor: pointer;
+        }
+
+        .cart-icon:hover {
+            background: #3e7bff;
+            color: black;
+            transform: scale(1.1);
+        }
+
+        .cart-icon.hidden {
+            display: none;
+        }
+
+        .cart-count {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: #e74c3c;
+            color: white;
+            font-size: 0.7rem;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid #3e7bff;
+            box-shadow: 0 0 10px #e74c3c;
         }
 
         .back-link {
@@ -183,40 +214,14 @@ div:focus,
             content: '◄';
             position: relative;
             z-index: 2;
-            font-weight: normal;
-        }
-
-        .back-link::after {
-            content: '';
-            position: absolute;
-            top: -2px;
-            left: -2px;
-            right: -2px;
-            bottom: -2px;
-            background: linear-gradient(45deg, #3e7bff, #8fb8ff, #3e7bff);
-            border-radius: 27px;
-            opacity: 0;
-            transition: opacity 0.3s;
-            z-index: 1;
         }
 
         .back-link:hover {
             color: black;
             transform: scale(1.1);
-            box-shadow: 0 0 30px #3e7bff;
+            background: #3e7bff;
         }
 
-        .back-link:hover::after {
-            opacity: 1;
-            animation: rotate 1s linear infinite;
-        }
-
-        @keyframes rotate {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
-
-        /* Контейнер с прокруткой */
         .products-scroll {
             flex: 1;
             overflow-y: auto;
@@ -225,7 +230,6 @@ div:focus,
             z-index: 2;
         }
 
-        /* Разделы */
         .section-title {
             font-size: 1.2rem;
             font-weight: 700;
@@ -254,7 +258,6 @@ div:focus,
             border-bottom-color: #a0aec0;
         }
 
-        /* Сетка товаров */
         .products-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -325,7 +328,6 @@ div:focus,
             letter-spacing: 2px;
             box-shadow: 0 0 20px #2ecc71;
             z-index: 3;
-            font-family: 'Montserrat', sans-serif;
         }
 
         .product-image {
@@ -344,7 +346,6 @@ div:focus,
             color: #cfdfff;
             text-align: center;
             margin-bottom: 5px;
-            font-family: 'Montserrat', sans-serif;
         }
 
         .product-price {
@@ -354,16 +355,7 @@ div:focus,
             padding: 3px 10px;
             border-radius: 15px;
             font-weight: 600;
-            font-family: 'Montserrat', sans-serif;
             transition: all 0.3s ease;
-        }
-
-        .out-of-stock-text {
-            font-size: 0.8rem;
-            color: #a0aec0;
-            text-transform: uppercase;
-            margin-top: 5px;
-            font-family: 'Montserrat', sans-serif;
         }
 
         .empty-message {
@@ -374,11 +366,9 @@ div:focus,
             border: 2px dashed #3e7bff;
             border-radius: 30px;
             background: rgba(8, 20, 40, 0.5);
-            font-family: 'Montserrat', sans-serif;
             margin: 20px 0;
         }
 
-        /* Модальное окно */
         .modal {
             position: fixed;
             top: 0;
@@ -410,7 +400,6 @@ div:focus,
             position: relative;
         }
 
-        /* Кнопка закрытия */
         .modal-close-btn {
             position: absolute;
             top: 15px;
@@ -438,7 +427,6 @@ div:focus,
             box-shadow: 0 0 20px #e74c3c;
         }
 
-        /* Верхняя часть с фото и названием */
         .modal-header {
             padding: 20px 25px 10px;
             text-align: center;
@@ -449,7 +437,6 @@ div:focus,
             font-weight: 700;
             color: #8fb8ff;
             margin-bottom: 10px;
-            font-family: 'Montserrat', sans-serif;
             text-transform: uppercase;
             letter-spacing: 2px;
         }
@@ -470,7 +457,6 @@ div:focus,
             transition: 0.3s;
         }
 
-        /* Область скролла с товарами */
         .modal-scroll-area {
             flex: 1;
             overflow-y: auto;
@@ -478,7 +464,6 @@ div:focus,
             margin-bottom: 5px;
         }
 
-        /* Разделы наличия в модальном окне */
         .stock-section {
             margin-bottom: 15px;
         }
@@ -491,7 +476,6 @@ div:focus,
             padding-bottom: 3px;
             border-bottom: 2px solid;
             font-weight: 600;
-            font-family: 'Montserrat', sans-serif;
         }
 
         .stock-section-title.in-stock {
@@ -504,7 +488,6 @@ div:focus,
             border-bottom-color: #a0aec0;
         }
 
-        /* Список товаров */
         .modal-items-list {
             display: flex;
             flex-direction: column;
@@ -514,11 +497,10 @@ div:focus,
         .modal-item {
             border: 2px solid;
             border-radius: 10px;
-            padding: 8px 12px;
+            padding: 6px 10px;
             cursor: pointer;
             transition: all 0.2s ease;
             position: relative;
-            font-family: 'Montserrat', sans-serif;
             box-shadow: 0 0 15px rgba(62, 123, 255, 0.3);
         }
 
@@ -541,26 +523,11 @@ div:focus,
         }
 
         @keyframes selectedPulse {
-            0% {
-                box-shadow: 0 0 8px rgba(62, 123, 255, 0.6);
-                border-color: #3e7bff;
-            }
-            25% {
-                box-shadow: 0 0 15px rgba(95, 158, 255, 0.7);
-                border-color: #5f9eff;
-            }
-            50% {
-                box-shadow: 0 0 18px rgba(143, 184, 255, 0.8);
-                border-color: #8fb8ff;
-            }
-            75% {
-                box-shadow: 0 0 15px rgba(95, 158, 255, 0.7);
-                border-color: #5f9eff;
-            }
-            100% {
-                box-shadow: 0 0 8px rgba(62, 123, 255, 0.6);
-                border-color: #3e7bff;
-            }
+            0% { box-shadow: 0 0 8px rgba(62, 123, 255, 0.6); border-color: #3e7bff; }
+            25% { box-shadow: 0 0 15px rgba(95, 158, 255, 0.7); border-color: #5f9eff; }
+            50% { box-shadow: 0 0 18px rgba(143, 184, 255, 0.8); border-color: #8fb8ff; }
+            75% { box-shadow: 0 0 15px rgba(95, 158, 255, 0.7); border-color: #5f9eff; }
+            100% { box-shadow: 0 0 8px rgba(62, 123, 255, 0.6); border-color: #3e7bff; }
         }
 
         .modal-item.out-of-stock {
@@ -576,10 +543,10 @@ div:focus,
         }
 
         .item-name {
-            font-size: 1rem;
+            font-size: 0.85rem;
             color: #e0f0ff;
+            margin-bottom: 4px;
             font-weight: 600;
-            font-family: 'Montserrat', sans-serif;
             text-shadow: 0 0 5px rgba(255, 255, 255, 0.3);
         }
 
@@ -589,10 +556,8 @@ div:focus,
             justify-content: space-between;
             gap: 8px;
             flex-wrap: wrap;
-            margin-top: 4px;
         }
 
-        /* Блок количества */
         .quantity-selector {
             display: none;
             align-items: center;
@@ -605,14 +570,8 @@ div:focus,
         }
 
         @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: scale(0.9);
-            }
-            to {
-                opacity: 1;
-                transform: scale(1);
-            }
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
         }
 
         .quantity-selector.show {
@@ -648,7 +607,6 @@ div:focus,
             padding: 2px;
             text-align: center;
             color: #8fb8ff;
-            font-family: 'Montserrat', sans-serif;
             font-size: 0.8rem;
             font-weight: 600;
         }
@@ -658,7 +616,6 @@ div:focus,
             box-shadow: 0 0 8px #3e7bff;
         }
 
-        /* Нижняя панель */
         .modal-footer {
             background: rgba(8, 20, 40, 0.95);
             backdrop-filter: blur(10px);
@@ -682,14 +639,12 @@ div:focus,
             font-size: 0.7rem;
             text-transform: uppercase;
             letter-spacing: 1px;
-            font-family: 'Montserrat', sans-serif;
         }
 
         .price-value {
             color: #2ecc71;
             font-size: 1.1rem;
             font-weight: 800;
-            font-family: 'Montserrat', sans-serif;
             text-shadow: 0 0 8px #2ecc71;
         }
 
@@ -712,7 +667,6 @@ div:focus,
             border-radius: 22px;
             cursor: pointer;
             transition: all 0.3s ease;
-            font-family: 'Montserrat', sans-serif;
             box-shadow: 0 0 10px rgba(46, 204, 113, 0.3);
         }
 
@@ -723,7 +677,6 @@ div:focus,
             box-shadow: 0 0 15px #2ecc71;
         }
 
-        /* Уведомления */
         .notification {
             position: fixed;
             top: 20px;
@@ -777,7 +730,7 @@ div:focus,
         }
 
         @media (max-width: 400px) {
-            .ship-name { font-size: 2rem; }
+            .ship-name { font-size: 1.8rem; }
             .product-image { width: 60px; height: 60px; }
             .modal-footer { flex-direction: column; gap: 8px; }
             .modal-order-btn { width: 100%; }
@@ -796,7 +749,13 @@ div:focus,
                 <div class="ship-name">VAPEOPT</div>
                 <div class="ship-sub">КАТАЛОГ ЭЛ.СИГАРЕТ</div>
             </div>
-            <a href="index.html" class="back-link" title="Назад"></a>
+            <div class="header-controls">
+                <div class="cart-icon hidden" id="cartIcon" onclick="window.location.href='index.html#cart'">
+                    🛒
+                    <span class="cart-count" id="cartCount">0</span>
+                </div>
+                <a href="index.html" class="back-link" title="Назад"></a>
+            </div>
         </div>
 
         <div class="products-scroll" id="productsContainer">
@@ -804,7 +763,6 @@ div:focus,
         </div>
     </div>
 
-    <!-- Уведомления -->
     <div class="notification" id="notification">
         <div class="notification-content">
             <span class="notification-icon" id="notificationIcon">⚡</span>
@@ -812,7 +770,6 @@ div:focus,
         </div>
     </div>
 
-    <!-- Модальное окно товара -->
     <div class="modal" id="productModal">
         <div class="modal-content">
             <button class="modal-close-btn" id="modalCloseBtn">✕</button>
@@ -834,41 +791,39 @@ div:focus,
                     <span class="price-value" id="modalPrice">0</span>
                     <span class="price-currency">BYN</span>
                 </div>
-                <button class="modal-order-btn" id="modalOrderBtn">ЗАКАЗАТЬ</button>
+                <button class="modal-order-btn" id="modalOrderBtn">В КОРЗИНУ</button>
             </div>
         </div>
     </div>
 
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+    <script src="firebase-config.js"></script>
+
+    <!-- Скрипт корзины -->
+    <script src="cart-script.js"></script>
+
     <script>
-        // Загружаем товары из localStorage
-        let products = JSON.parse(localStorage.getItem('vapeopt_pod')) || [];
+        // Константа для коллекции
+        const COLLECTION_NAME = 'pod';
+        
+        let products = [];
         let currentProductIndex = -1;
         let selectedItemIndex = -1;
 
-        // Функция показа уведомления
-        function showNotification(message, type = 'warning') {
-            const notification = document.getElementById('notification');
-            const icon = document.getElementById('notificationIcon');
-            const messageEl = document.getElementById('notificationMessage');
-            
-            notification.className = 'notification show ' + type;
-            
-            if (type === 'warning') {
-                icon.textContent = '⚠️';
-            } else if (type === 'error') {
-                icon.textContent = '❌';
-            } else {
-                icon.textContent = '✅';
+        // Загрузка товаров из Firebase
+        async function loadProducts() {
+            try {
+                products = await FirestoreService.getCollection(COLLECTION_NAME);
+                displayProducts();
+            } catch (error) {
+                console.error('Ошибка загрузки:', error);
+                products = [];
+                displayProducts();
             }
-            
-            messageEl.textContent = message;
-            
-            setTimeout(() => {
-                notification.classList.remove('show');
-            }, 3000);
         }
 
-        // Функция для отображения товаров
         function displayProducts() {
             const container = document.getElementById('productsContainer');
             
@@ -877,7 +832,6 @@ div:focus,
                 return;
             }
 
-            // Разделяем товары на "в наличии" и "нет в наличии"
             const inStockProducts = products.filter(product => 
                 product.items && product.items.some(item => item.inStock !== false)
             );
@@ -888,22 +842,21 @@ div:focus,
 
             let html = '';
 
-            // Блок "В наличии"
             if (inStockProducts.length > 0) {
                 html += '<div class="section-title in-stock">✔ В НАЛИЧИИ</div>';
                 html += '<div class="products-grid">';
                 
                 inStockProducts.forEach((product, index) => {
-                    const originalIndex = products.findIndex(p => p.name === product.name && p.price === product.price);
+                    const originalIndex = products.findIndex(p => p.id === product.id);
                     
                     html += `
                         <div class="product-card ${product.isNew ? 'new-item' : ''}" onclick="openProductModal(${originalIndex})">
-                            <img src="${product.image || 'https://via.placeholder.com/80x80/10213f/3e7bff?text=' + encodeURIComponent(product.name.substring(0, 3))}" 
+                            <img src="${product.image || 'https://via.placeholder.com/80x80/10213f/3e7bff?text=' + encodeURIComponent((product.name || 'Товар').substring(0, 3))}" 
                                  alt="${product.name}" 
                                  class="product-image"
                                  onerror="this.src='https://via.placeholder.com/80x80/10213f/3e7bff?text=Нет+фото'">
-                            <div class="product-name">${product.name}</div>
-                            <div class="product-price">${product.price} BYN</div>
+                            <div class="product-name">${product.name || 'Без названия'}</div>
+                            <div class="product-price">${product.price || 0} BYN</div>
                         </div>
                     `;
                 });
@@ -911,22 +864,21 @@ div:focus,
                 html += '</div>';
             }
 
-            // Блок "Нет в наличии"
             if (outOfStockProducts.length > 0) {
                 html += '<div class="section-title out-of-stock">✖ НЕТ В НАЛИЧИИ</div>';
                 html += '<div class="products-grid">';
                 
                 outOfStockProducts.forEach((product, index) => {
-                    const originalIndex = products.findIndex(p => p.name === product.name && p.price === product.price);
+                    const originalIndex = products.findIndex(p => p.id === product.id);
                     
                     html += `
                         <div class="product-card out-of-stock" onclick="showOutOfStockNotification()">
-                            <img src="${product.image || 'https://via.placeholder.com/80x80/4a5568/718096?text=' + encodeURIComponent(product.name.substring(0, 3))}" 
+                            <img src="${product.image || 'https://via.placeholder.com/80x80/4a5568/718096?text=' + encodeURIComponent((product.name || 'Товар').substring(0, 3))}" 
                                  alt="${product.name}" 
                                  class="product-image"
                                  onerror="this.src='https://via.placeholder.com/80x80/4a5568/718096?text=Нет+фото'">
-                            <div class="product-name">${product.name}</div>
-                            <div class="product-price">${product.price} BYN</div>
+                            <div class="product-name">${product.name || 'Без названия'}</div>
+                            <div class="product-price">${product.price || 0} BYN</div>
                         </div>
                     `;
                 });
@@ -937,78 +889,54 @@ div:focus,
             container.innerHTML = html;
         }
 
-        // Функция для уведомления об отсутствии товара
         window.showOutOfStockNotification = function() {
             showNotification('Товара нет в наличии', 'error');
         };
 
-// Функция для обработки выбора товара
-window.selectItem = function(index, event) {
-    if (event) {
-        event.stopPropagation();
-    }
-    
-    const product = products[currentProductIndex];
-    if (!product || !product.items[index] || product.items[index].inStock === false) return;
-    
-    // Если кликнули на тот же самый товар - отменяем выбор
-    if (selectedItemIndex === index) {
-        selectedItemIndex = -1;
-    } else {
-        // Иначе выбираем новый товар
-        selectedItemIndex = index;
-    }
-    
-    openProductModal(currentProductIndex);
-};
-
-        // Функции для работы с количеством
-        window.updateQuantity = function(itemIndex, change, event) {
-            if (event) {
-                event.stopPropagation();
-            }
+        window.selectItem = function(index, event) {
+            if (event) event.stopPropagation();
             
             const product = products[currentProductIndex];
-            if (!product) return;
+            if (!product || !product.items || !product.items[index] || product.items[index].inStock === false) return;
+            
+            selectedItemIndex = selectedItemIndex === index ? -1 : index;
+            openProductModal(currentProductIndex);
+        };
+
+        window.updateQuantity = function(itemIndex, change, event) {
+            if (event) event.stopPropagation();
+            
+            const product = products[currentProductIndex];
+            if (!product || !product.items || !product.items[itemIndex]) return;
             
             const item = product.items[itemIndex];
-            if (!item) return;
-            
             item.quantity = Math.max(1, (item.quantity || 1) + change);
             
             const input = document.getElementById(`quantity-${itemIndex}`);
             if (input) input.value = item.quantity;
-            
-            localStorage.setItem('vapeopt_pod', JSON.stringify(products));
         };
 
         window.setQuantity = function(itemIndex, value, event) {
-            if (event) {
-                event.stopPropagation();
-            }
+            if (event) event.stopPropagation();
             
             const product = products[currentProductIndex];
-            if (!product) return;
+            if (!product || !product.items || !product.items[itemIndex]) return;
             
             const item = product.items[itemIndex];
-            if (!item) return;
-            
             const num = parseInt(value) || 1;
             item.quantity = Math.max(1, num);
-            
-            localStorage.setItem('vapeopt_pod', JSON.stringify(products));
         };
 
-        // Открытие модального окна с деталями товара
         window.openProductModal = function(index) {
             const product = products[index];
+            if (!product) return;
+            
             currentProductIndex = index;
             
             if (product.items) {
                 product.items.forEach(item => {
                     item.quantity = 1;
                 });
-                localStorage.setItem('vapeopt_pod', JSON.stringify(products));
             }
             
             const modal = document.getElementById('productModal');
@@ -1017,10 +945,10 @@ window.selectItem = function(index, event) {
             const modalProductName = document.getElementById('modalProductName');
             const modalItemsContainer = document.getElementById('modalItemsContainer');
 
-            modalImage.src = product.image || 'https://via.placeholder.com/150x150/10213f/3e7bff?text=' + encodeURIComponent(product.name.substring(0, 3));
+            modalImage.src = product.image || 'https://via.placeholder.com/150x150/10213f/3e7bff?text=' + encodeURIComponent((product.name || 'Товар').substring(0, 3));
             modalImage.alt = product.name;
-            modalPrice.textContent = product.price;
-            modalProductName.textContent = product.name;
+            modalPrice.textContent = product.price || 0;
+            modalProductName.textContent = product.name || 'Без названия';
             
             const inStockItems = product.items ? product.items.filter(item => item.inStock !== false) : [];
             const outOfStockItems = product.items ? product.items.filter(item => item.inStock === false) : [];
@@ -1040,7 +968,7 @@ window.selectItem = function(index, event) {
                     
                     itemsHtml += `
                         <div class="modal-item in-stock ${isSelected ? 'selected' : ''}" onclick="selectItem(${originalIndex}, event)">
-                            <div class="item-name">${item.name}</div>
+                            <div class="item-name">${item.name || 'Без названия'}</div>
                             <div class="item-details">
                                 <div class="quantity-selector ${isSelected ? 'show' : ''}" id="selector-${originalIndex}">
                                     <button class="quantity-btn" onclick="updateQuantity(${originalIndex}, -1, event)">−</button>
@@ -1067,7 +995,7 @@ window.selectItem = function(index, event) {
                 outOfStockItems.forEach((item) => {
                     itemsHtml += `
                         <div class="modal-item out-of-stock">
-                            <div class="item-name">${item.name}</div>
+                            <div class="item-name">${item.name || 'Без названия'}</div>
                         </div>
                     `;
                 });
@@ -1079,8 +1007,7 @@ window.selectItem = function(index, event) {
             modal.classList.add('show');
         };
 
-        // Добавление в корзину
-        document.getElementById('modalOrderBtn').addEventListener('click', function() {
+        function addToCart() {
             if (selectedItemIndex === -1) {
                 showNotification('Выберите модификацию', 'warning');
                 return;
@@ -1094,73 +1021,44 @@ window.selectItem = function(index, event) {
                 return;
             }
 
-            let cart = JSON.parse(localStorage.getItem('vapeopt_cart')) || [];
-            
-            const cartItem = {
-                id: Date.now() + Math.random(),
-                productId: currentProductIndex,
-                itemIndex: selectedItemIndex,
-                name: product.name,
-                itemName: item.name,
-                price: product.price,
-                quantity: item.quantity,
-                image: product.image,
-                type: 'pod'
-            };
-
-            cart.push(cartItem);
-            localStorage.setItem('vapeopt_cart', JSON.stringify(cart));
-
-            item.quantity = 1;
-            localStorage.setItem('vapeopt_pod', JSON.stringify(products));
-
-            showNotification('Товар добавлен в корзину', 'success');
-
-            selectedItemIndex = -1;
-
-            if (currentProductIndex !== -1) {
-                openProductModal(currentProductIndex);
+            if (window.addPodToCart) {
+                window.addPodToCart(product, item, item.quantity);
+                closeModal();
             }
+        }
 
-            window.dispatchEvent(new StorageEvent('storage', {
-                key: 'vapeopt_cart',
-                newValue: JSON.stringify(cart)
-            }));
-        });
-
-        // Закрытие модального окна
         function closeModal() {
             document.getElementById('productModal').classList.remove('show');
-            if (currentProductIndex !== -1) {
-                const product = products[currentProductIndex];
-                if (product && product.items) {
-                    product.items.forEach(item => {
-                        item.quantity = 1;
-                    });
-                    localStorage.setItem('vapeopt_pod', JSON.stringify(products));
-                }
+            if (currentProductIndex !== -1 && products[currentProductIndex] && products[currentProductIndex].items) {
+                products[currentProductIndex].items.forEach(item => {
+                    item.quantity = 1;
+                });
             }
             selectedItemIndex = -1;
         }
 
-        document.getElementById('modalCloseBtn').addEventListener('click', closeModal);
-        
-        document.getElementById('productModal').addEventListener('click', (e) => {
-            if (e.target === document.getElementById('productModal')) {
-                closeModal();
-            }
-        });
-
-        // Инициализация
-        displayProducts();
-
-        // Слушаем изменения из других страниц
-        window.addEventListener('storage', function(e) {
-            if (e.key === 'vapeopt_pod') {
-                products = JSON.parse(e.newValue || '[]');
+        function subscribeToUpdates() {
+            FirestoreService.subscribeToCollection(COLLECTION_NAME, (updatedProducts) => {
+                products = updatedProducts;
                 displayProducts();
-            }
-        });
+            });
+        }
+
+        async function init() {
+            await loadProducts();
+            subscribeToUpdates();
+
+            document.getElementById('modalCloseBtn').addEventListener('click', closeModal);
+            document.getElementById('modalOrderBtn').addEventListener('click', addToCart);
+            
+            document.getElementById('productModal').addEventListener('click', (e) => {
+                if (e.target === document.getElementById('productModal')) {
+                    closeModal();
+                }
+            });
+        }
+
+        init();
     </script>
 </body>
 </html>
