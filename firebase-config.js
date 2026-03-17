@@ -1,4 +1,3 @@
-// firebase-config.js
 // Подключение Firebase ко всем страницам сайта
 
 // Конфигурация Firebase (ваши данные)
@@ -14,6 +13,11 @@ const firebaseConfig = {
 
 // Инициализация Firebase
 firebase.initializeApp(firebaseConfig);
+
+// ИНИЦИАЛИЗИРУЕМ AUTH (это было пропущено)
+const auth = firebase.auth();
+
+// ИНИЦИАЛИЗИРУЕМ FIRESTORE
 const db = firebase.firestore();
 
 // Разрешаем использовать базу данных в тестовом режиме
@@ -124,6 +128,7 @@ const FirestoreService = {
   }
 };
 
-// Делаем сервис глобально доступным
+// Делаем сервисы глобально доступными
 window.FirestoreService = FirestoreService;
 window.db = db;
+window.auth = auth; // ДОБАВЛЯЕМ auth в глобальную область

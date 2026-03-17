@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>VAPEOPT | КАТАЛОГ</title>
     <style>
+        /* Все ваши стили остаются без изменений */
         * {
             margin: 0;
             padding: 0;
@@ -118,7 +119,7 @@
         }
 
         .ship-name {
-            font-size: 2rem; /* Уменьшено с 3.5rem */
+            font-size: 2rem;
             font-weight: 900;
             color: #8fb8ff;
             text-shadow: 0 0 20px #3e7bff, 0 0 40px #1e4fcf;
@@ -129,9 +130,9 @@
         }
 
         .ship-sub {
-            font-size: 0.7rem; /* Уменьшено с 1rem */
+            font-size: 0.7rem;
             color: #afc9ff;
-            letter-spacing: 3px; /* Уменьшено с 6px */
+            letter-spacing: 3px;
             text-transform: uppercase;
             font-family: 'Orbitron', sans-serif;
         }
@@ -152,13 +153,13 @@
             background: #10213f;
             border: 2px solid #3e7bff;
             color: #8fb8ff;
-            width: 45px; /* Уменьшено с 50px */
-            height: 45px; /* Уменьшено с 50px */
+            width: 45px;
+            height: 45px;
             border-radius: 25px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.5rem; /* Уменьшено с 1.8rem */
+            font-size: 1.5rem;
             text-decoration: none;
             box-shadow: 0 0 20px #3e7bff;
             transition: 0.2s;
@@ -181,9 +182,9 @@
             right: -5px;
             background: #e74c3c;
             color: white;
-            font-size: 0.7rem; /* Уменьшено с 0.8rem */
-            width: 18px; /* Уменьшено с 22px */
-            height: 18px; /* Уменьшено с 22px */
+            font-size: 0.7rem;
+            width: 18px;
+            height: 18px;
             border-radius: 50%;
             display: flex;
             align-items: center;
@@ -196,16 +197,17 @@
             background: #10213f;
             border: 2px solid #3e7bff;
             color: #8fb8ff;
-            width: 45px; /* Уменьшено с 50px */
-            height: 45px; /* Уменьшено с 50px */
+            width: 45px;
+            height: 45px;
             border-radius: 25px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.5rem; /* Уменьшено с 1.8rem */
+            font-size: 1.5rem;
             text-decoration: none;
             box-shadow: 0 0 20px #3e7bff;
             transition: 0.2s;
+            cursor: pointer;
         }
 
         .admin-ship:hover {
@@ -300,7 +302,7 @@
         }
 
         .cargo-icon {
-            font-size: 2.5rem; /* Уменьшено с 3.2rem */
+            font-size: 2.5rem;
             margin-bottom: 8px;
             filter: drop-shadow(0 0 10px #3e7bff);
             animation: iconFloat 3s ease-in-out infinite;
@@ -314,11 +316,11 @@
         }
 
         .cargo-name {
-            font-size: 0.9rem; /* Уменьшено с 1.3rem */
+            font-size: 0.9rem;
             font-weight: 700;
             color: #cfdfff;
             text-transform: uppercase;
-            letter-spacing: 1px; /* Уменьшено с 2px */
+            letter-spacing: 1px;
             animation: textGlow 2s ease-in-out infinite;
             position: relative;
             z-index: 2;
@@ -330,8 +332,8 @@
         }
 
         .cargo-data {
-            font-size: 0.7rem; /* Уменьшено с 0.8rem */
-            padding: 3px 12px; /* Уменьшено с 3px 15px */
+            font-size: 0.7rem;
+            padding: 3px 12px;
             border-radius: 20px;
             margin-top: 6px;
             border: 1px solid;
@@ -369,9 +371,9 @@
         .ship-display {
             margin-top: 5px;
             text-align: center;
-            font-size: 1rem; /* Уменьшено с 1.3rem */
+            font-size: 1rem;
             color: #8fb8ff;
-            letter-spacing: 3px; /* Уменьшено с 5px */
+            letter-spacing: 3px;
             border-top: 2px solid #3e7bff;
             padding-top: 10px;
             position: relative;
@@ -381,7 +383,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 15px; /* Уменьшено с 20px */
+            gap: 15px;
         }
 
         .ship-display span {
@@ -389,7 +391,7 @@
         }
 
         .arrow-up {
-            font-size: 1.5rem; /* Уменьшено с 2rem */
+            font-size: 1.5rem;
             color: #3e7bff;
             animation: arrowBounce 1s ease-in-out infinite;
             display: inline-block;
@@ -788,12 +790,13 @@
                 <div class="ship-sub">КАТАЛОГ ТОВАРОВ</div>
             </div>
             <div class="header-controls">
-                <!-- Корзина убрана из интерфейса, будет появляться только когда есть товары -->
+                <!-- Корзина -->
                 <div class="cart-icon hidden" id="cartIcon">
                     🛒
                     <span class="cart-count" id="cartCount">0</span>
                 </div>
-                <a href="admin.html" class="admin-ship" id="adminShip">⚡</a>
+                <!-- Кнопка входа в админ-панель (ведет на login.html) -->
+                <div class="admin-ship" id="adminLoginBtn">⚡</div>
             </div>
         </div>
 
@@ -1202,6 +1205,8 @@
 
         // ==================== ИНИЦИАЛИЗАЦИЯ ====================
         async function init() {
+            console.log('Инициализация index.html');
+            
             await updateAllSections();
             loadCart();
 
@@ -1212,33 +1217,51 @@
             FirestoreService.subscribeToCollection('disposables', () => updateAllSections());
             FirestoreService.subscribeToCollection('snus', () => updateAllSections());
 
-            // Обработчики событий
-            document.getElementById('adminShip').addEventListener('click', (e) => {
-                e.preventDefault();
-                window.location.href = 'admin.html';
-            });
+            // ========== КНОПКА ВХОДА В АДМИН-ПАНЕЛЬ ==========
+            const adminLoginBtn = document.getElementById('adminLoginBtn');
+            console.log('Кнопка adminLoginBtn:', adminLoginBtn); // Для отладки
+            
+            if (adminLoginBtn) {
+                adminLoginBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    console.log('Клик по кнопке входа!');
+                    window.location.href = 'login.html';
+                });
+            } else {
+                console.error('Кнопка adminLoginBtn не найдена!');
+            }
 
+            // ========== КОРЗИНА ==========
             const cartIcon = document.getElementById('cartIcon');
             const cartModal = document.getElementById('cartModal');
             const closeCart = document.getElementById('closeCart');
             const checkoutBtn = document.getElementById('checkoutBtn');
 
-            cartIcon.addEventListener('click', () => {
-                cartModal.classList.add('show');
-                updateCartDisplay();
-            });
+            if (cartIcon) {
+                cartIcon.addEventListener('click', () => {
+                    cartModal.classList.add('show');
+                    updateCartDisplay();
+                });
+            }
 
-            closeCart.addEventListener('click', () => {
-                cartModal.classList.remove('show');
-            });
-
-            checkoutBtn.addEventListener('click', checkout);
-
-            cartModal.addEventListener('click', (e) => {
-                if (e.target === cartModal) {
+            if (closeCart) {
+                closeCart.addEventListener('click', () => {
                     cartModal.classList.remove('show');
-                }
-            });
+                });
+            }
+
+            if (checkoutBtn) {
+                checkoutBtn.addEventListener('click', checkout);
+            }
+
+            if (cartModal) {
+                cartModal.addEventListener('click', (e) => {
+                    if (e.target === cartModal) {
+                        cartModal.classList.remove('show');
+                    }
+                });
+            }
 
             // Слушаем изменения localStorage для синхронизации
             window.addEventListener('storage', function(e) {

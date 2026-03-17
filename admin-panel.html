@@ -178,6 +178,29 @@
             transform: scale(1.1);
         }
 
+        .logout-btn {
+            background: #e74c3c;
+            border: 2px solid #e74c3c;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            text-decoration: none;
+            box-shadow: 0 0 15px #e74c3c;
+            transition: 0.2s;
+            cursor: pointer;
+        }
+
+        .logout-btn:hover {
+            background: #c0392b;
+            border-color: #c0392b;
+            transform: scale(1.1);
+        }
+
         .ship-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -625,6 +648,23 @@
             font-family: 'Montserrat', sans-serif;
         }
 
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-right: 8px;
+            padding: 5px 10px;
+            background: rgba(8, 20, 40, 0.5);
+            border: 1px solid #3e7bff;
+            border-radius: 30px;
+            font-size: 0.8rem;
+            color: #8fb8ff;
+            max-width: 150px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
         @media (max-width: 400px) {
             .ship-name { font-size: 1.8rem; }
             .cargo-icon { font-size: 1.8rem; }
@@ -632,10 +672,20 @@
             .order-items-list { grid-template-columns: 1fr; }
             .order-footer { flex-direction: column; gap: 10px; }
             .order-actions { width: 100%; justify-content: center; }
+            .user-info { max-width: 100px; font-size: 0.7rem; }
         }
     </style>
 </head>
 <body>
+    <!-- !!! ЗАЩИТА АДМИН-ПАНЕЛИ - СКРИПТЫ ПРОВЕРКИ АВТОРИЗАЦИИ !!! -->
+    <!-- Эти скрипты должны быть загружены ДО всего остального контента -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+    <script src="firebase-config.js"></script>
+    <script src="auth.js"></script>
+    <!-- !!! КОНЕЦ БЛОКА ЗАЩИТЫ !!! -->
+
     <div class="ship-hud">
         <div class="hologram-ring"></div>
         <div class="hologram-ring2"></div>
@@ -646,7 +696,9 @@
                 <div class="ship-sub">АДМИН-ПАНЕЛЬ</div>
             </div>
             <div class="header-controls">
+                <div class="user-info" id="currentUserEmail">Загрузка...</div>
                 <a href="index.html" class="control-btn" title="На главную">🏠</a>
+                <button class="logout-btn" id="logoutBtn" title="Выйти">🚪</button>
             </div>
         </div>
 
@@ -685,11 +737,6 @@
             </div>
         </div>
     </div>
-
-    <!-- Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
-    <script src="firebase-config.js"></script>
 
     <script>
         // ==================== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ====================
@@ -1064,12 +1111,44 @@
             });
         }
 
+        // ==================== ФУНКЦИИ ДЛЯ АВТОРИЗАЦИИ ====================
+        function setupAuth() {
+            // Показываем email текущего пользователя
+            const userEmailSpan = document.getElementById('currentUserEmail');
+            if (typeof auth !== 'undefined') {
+                auth.onAuthStateChanged(function(user) {
+                    if (user && userEmailSpan) {
+                        userEmailSpan.textContent = user.email;
+                    } else if (userEmailSpan) {
+                        userEmailSpan.textContent = 'Не авторизован';
+                    }
+                });
+            }
+
+            // Обработка кнопки выхода
+            const logoutBtn = document.getElementById('logoutBtn');
+            if (logoutBtn) {
+                logoutBtn.addEventListener('click', async function() {
+                    if (typeof auth !== 'undefined') {
+                        try {
+                            await auth.signOut();
+                            window.location.href = 'login.html';
+                        } catch (error) {
+                            console.error('Ошибка при выходе:', error);
+                            alert('Ошибка при выходе из системы');
+                        }
+                    }
+                });
+            }
+        }
+
         // ==================== ИНИЦИАЛИЗАЦИЯ ====================
         async function init() {
             await updateDisplay();
             await loadOrders();
             subscribeToUpdates();
             initModal();
+            setupAuth();
         }
 
         init();
