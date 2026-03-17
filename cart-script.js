@@ -68,6 +68,43 @@ function updateCartIcon() {
     }
 }
 
+// Функция для создания уникального ключа товара (для объединения одинаковых)
+function getItemKey(item) {
+    if (item.type === 'liquid') {
+        return `${item.type}_${item.productId}_${item.flavorIndex}_${item.strength}`;
+    } else if (item.type === 'consumable') {
+        return `${item.type}_${item.productId}_${item.itemIndex}_${item.resistance}`;
+    } else if (item.type === 'pod') {
+        return `${item.type}_${item.productId}_${item.itemIndex}`;
+    } else if (item.type === 'disposable') {
+        return `${item.type}_${item.productId}_${item.itemIndex}_${item.strength}`;
+    } else if (item.type === 'snus') {
+        return `${item.type}_${item.productId}_${item.itemIndex}_${item.strength}`;
+    }
+    return `${item.type}_${item.productId}_${Date.now()}`;
+}
+
+// Функция для объединения товаров в корзине
+function mergeCartItems() {
+    const mergedItems = [];
+    const itemMap = new Map();
+    
+    cart.forEach(item => {
+        const key = getItemKey(item);
+        if (itemMap.has(key)) {
+            // Если товар уже есть, увеличиваем количество
+            const existingItem = itemMap.get(key);
+            existingItem.quantity += item.quantity;
+        } else {
+            // Иначе добавляем новый товар
+            const itemCopy = { ...item };
+            itemMap.set(key, itemCopy);
+        }
+    });
+    
+    cart = Array.from(itemMap.values());
+}
+
 // ==================== ФУНКЦИИ ДЛЯ СТРАНИЦ КАТАЛОГА ====================
 
 // Для жидкостей
@@ -94,6 +131,7 @@ window.addLiquidToCart = function(product, flavor, quantity) {
     };
     
     cart.push(cartItem);
+    mergeCartItems(); // Объединяем одинаковые товары
     saveCart();
     showNotification('Товар добавлен в корзину', 'success');
     return true;
@@ -121,6 +159,7 @@ window.addConsumableToCart = function(product, item, quantity) {
     };
     
     cart.push(cartItem);
+    mergeCartItems(); // Объединяем одинаковые товары
     saveCart();
     showNotification('Товар добавлен в корзину', 'success');
     return true;
@@ -146,6 +185,7 @@ window.addPodToCart = function(product, item, quantity) {
     };
     
     cart.push(cartItem);
+    mergeCartItems(); // Объединяем одинаковые товары
     saveCart();
     showNotification('Товар добавлен в корзину', 'success');
     return true;
@@ -173,6 +213,7 @@ window.addDisposableToCart = function(product, item, quantity) {
     };
     
     cart.push(cartItem);
+    mergeCartItems(); // Объединяем одинаковые товары
     saveCart();
     showNotification('Товар добавлен в корзину', 'success');
     return true;
@@ -199,6 +240,7 @@ window.addSnusToCart = function(product, item, quantity) {
     };
     
     cart.push(cartItem);
+    mergeCartItems(); // Объединяем одинаковые товары
     saveCart();
     showNotification('Товар добавлен в корзину', 'success');
     return true;
@@ -213,6 +255,99 @@ function getStrengthText(strength) {
         case 4: return '70';
         default: return '0';
     }
+}
+
+// Функция для удаления товара из корзины по индексу
+window.removeFromCart = function(index) {
+    if (index >= 0 && index < cart.length) {
+        cart.splice(index, 1);
+        saveCart();
+        updateCartDisplay();
+        showNotification('Товар удален из корзины', 'success');
+    }
+};
+
+// Функция для обновления количества товара
+window.updateCartItemQuantity = function(index, newQuantity) {
+    if (index >= 0 && index < cart.length) {
+        if (newQuantity <= 0) {
+            cart.splice(index, 1);
+        } else {
+            cart[index].quantity = newQuantity;
+        }
+        saveCart();
+        updateCartDisplay();
+    }
+};
+
+// ==================== ФУНКЦИИ ДЛЯ ОТОБРАЖЕНИЯ КОРЗИНЫ ====================
+window.openCart = function() {
+    const cartModal = document.getElementById('cartModal');
+    if (cartModal) {
+        cartModal.classList.add('show');
+        updateCartDisplay();
+    } else {
+        window.location.href = 'index.html#cart';
+    }
+};
+
+function updateCartDisplay() {
+    const cartItemsGrid = document.getElementById('cartItemsGrid');
+    const summaryItems = document.getElementById('summaryItems');
+    const summaryPrice = document.getElementById('summaryPrice');
+    
+    if (!cartItemsGrid) return;
+
+    if (cart.length === 0) {
+        cartItemsGrid.innerHTML = '<div class="cart-empty">🛒 КОРЗИНА ПУСТА</div>';
+        if (summaryItems) summaryItems.textContent = '0';
+        if (summaryPrice) summaryPrice.textContent = '0';
+        return;
+    }
+
+    let html = '';
+    let totalItems = 0;
+    let totalPrice = 0;
+
+    cart.forEach((item, index) => {
+        totalItems += item.quantity;
+        totalPrice += item.price * item.quantity;
+
+        let itemDetails = '';
+
+        if (item.flavorName) {
+            itemDetails = `${item.flavorName} • ${item.strengthText || '0'} мг • ${item.volume || 30} мл`;
+        } else if (item.resistance) {
+            itemDetails = `${item.itemName} • ${item.resistance} Ом • ${item.volume || 30} мл`;
+        } else if (item.type === 'pod') {
+            itemDetails = `${item.itemName}`;
+        } else if (item.strength && item.puffs) {
+            itemDetails = `${item.itemName} • ${item.strength}% • ${item.puffs} тяг`;
+        } else if (item.type === 'snus') {
+            itemDetails = `${item.itemName} • ${item.strength} мг`;
+        }
+
+        html += `
+            <div class="cart-item-card">
+                <img src="${item.image || 'https://via.placeholder.com/70x70/10213f/3e7bff?text=' + encodeURIComponent(item.name.substring(0, 3))}" 
+                     class="cart-item-image"
+                     onerror="this.src='https://via.placeholder.com/70x70/10213f/3e7bff?text=Нет+фото'">
+                <div class="cart-item-name">${item.name}</div>
+                <div class="cart-item-details">${itemDetails}</div>
+                <div class="cart-item-price-block">
+                    <span class="cart-item-price">${item.price} Br</span>
+                    <span class="cart-item-quantity">${item.quantity} шт</span>
+                </div>
+                <button class="cart-item-remove" onclick="removeFromCart(${index})" title="Удалить товар">
+                    ✕
+                </button>
+            </div>
+        `;
+    });
+
+    cartItemsGrid.innerHTML = html;
+    if (summaryItems) summaryItems.textContent = totalItems;
+    if (summaryPrice) summaryPrice.textContent = totalPrice;
 }
 
 // ==================== СТИЛИ ДЛЯ УВЕДОМЛЕНИЙ ====================
@@ -330,6 +465,37 @@ function addCartIconStyles() {
             border: 2px solid #3e7bff;
             box-shadow: 0 0 10px #e74c3c;
         }
+        
+        /* Стили для кнопки удаления в корзине */
+        .cart-item-card {
+            position: relative;
+        }
+        
+        .cart-item-remove {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            width: 24px;
+            height: 24px;
+            border-radius: 12px;
+            background: rgba(231, 76, 60, 0.2);
+            border: 1px solid #e74c3c;
+            color: #e74c3c;
+            font-size: 1rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            z-index: 5;
+        }
+        
+        .cart-item-remove:hover {
+            background: #e74c3c;
+            color: white;
+            transform: scale(1.1);
+        }
     `;
     document.head.appendChild(style);
 }
@@ -339,10 +505,22 @@ function initCartScript() {
     addNotificationStyles();
     addCartIconStyles();
     loadCart();
+    mergeCartItems(); // Объединяем товары при загрузке
+    
+    // Добавляем обработчик для иконки корзины
+    const cartIcon = document.getElementById('cartIcon');
+    if (cartIcon) {
+        cartIcon.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            window.openCart();
+        });
+    }
     
     window.addEventListener('storage', function(e) {
         if (e.key === 'vapeopt_cart') {
             cart = JSON.parse(e.newValue || '[]');
+            mergeCartItems(); // Объединяем товары при изменении
             updateCartIcon();
         }
     });

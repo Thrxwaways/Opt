@@ -734,6 +734,21 @@
             box-shadow: 0 0 30px #2ecc71;
         }
 
+        .loading-indicator {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(8, 20, 40, 0.95);
+            border: 3px solid #3e7bff;
+            border-radius: 30px;
+            padding: 20px;
+            color: #8fb8ff;
+            font-size: 1.2rem;
+            z-index: 2000;
+            box-shadow: 0 0 50px #3e7bff;
+        }
+
         @media (max-width: 400px) {
             .ship-name { font-size: 2rem; }
             .modal-content { padding: 20px; }
@@ -844,7 +859,28 @@
         let products = [];
         let editingIndex = -1;
 
-        // Загрузка товаров из Firebase
+        function showLoadingIndicator() {
+            let loader = document.getElementById('loadingIndicator');
+            if (!loader) {
+                loader = document.createElement('div');
+                loader.id = 'loadingIndicator';
+                loader.className = 'loading-indicator';
+                loader.innerHTML = '💾 СОХРАНЕНИЕ...';
+                document.body.appendChild(loader);
+            }
+        }
+
+        function hideLoadingIndicator() {
+            const loader = document.getElementById('loadingIndicator');
+            if (loader) {
+                loader.remove();
+            }
+        }
+
+        function showNotification(message, type = 'success') {
+            alert(message);
+        }
+
         async function loadProducts() {
             try {
                 products = await FirestoreService.getCollection(COLLECTION_NAME);
@@ -856,14 +892,35 @@
             }
         }
 
-        // Сохранение товаров в Firebase
         async function saveProducts() {
             try {
-                await FirestoreService.replaceCollection(COLLECTION_NAME, products);
+                showLoadingIndicator();
+                
+                const productsToSave = products.map(product => {
+                    const productCopy = { ...product };
+                    
+                    if (productCopy.image && productCopy.image.startsWith('data:image')) {
+                        return productCopy;
+                    } else if (productCopy.image && !productCopy.image.startsWith('http') && !productCopy.image.startsWith('data:')) {
+                        productCopy.image = '';
+                    } else if (!productCopy.image) {
+                        productCopy.image = '';
+                    }
+                    
+                    return productCopy;
+                });
+                
+                await FirestoreService.replaceCollection(COLLECTION_NAME, productsToSave);
+                await FirestoreService.forceSync(COLLECTION_NAME);
+                
                 console.log('Товары успешно сохранены в Firebase');
+                hideLoadingIndicator();
+                showNotification('Товары сохранены', 'success');
+                
             } catch (error) {
                 console.error('Ошибка сохранения:', error);
-                alert('Ошибка при сохранении в Firebase');
+                hideLoadingIndicator();
+                showNotification('Ошибка при сохранении в Firebase', 'error');
             }
         }
 
@@ -891,7 +948,7 @@
                          class="product-image"
                          onerror="this.src='https://via.placeholder.com/70x70/10213f/3e7bff?text=Нет+фото'">
                     <div class="product-name">${product.name || 'Без названия'}</div>
-                    <div class="product-price">${product.price || 0} BYN</div>
+                    <div class="product-price">${product.price || 0} Br</div>
                     ${product.isNew ? '<div class="new-badge">NEW</div>' : ''}
                     ${!hasStock ? '<div class="out-of-stock-badge">НЕТ</div>' : ''}
                 `;
