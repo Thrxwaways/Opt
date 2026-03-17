@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Вход в панель управления</title>
-    <!-- Здесь вы можете подключить ваши основные стили, чтобы страница входа выглядела в стиле сайта -->
     <style>
         /* Базовые стили для страницы входа */
         body {
@@ -132,14 +131,14 @@
         </form>
     </div>
 
-    <!-- Подключаем Firebase -->
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <!-- Подключаем Firebase - ИСПРАВЛЕНО: теперь версия 9.23.0 (как в index.html) -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
     
     <!-- Ваш файл с конфигурацией Firebase -->
     <script src="firebase-config.js"></script>
     
-    <!-- Файл с логикой авторизации (создадим дальше) -->
+    <!-- Файл с логикой авторизации -->
     <script src="auth.js"></script>
 </body>
 </html>

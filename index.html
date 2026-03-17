@@ -795,8 +795,8 @@
                     🛒
                     <span class="cart-count" id="cartCount">0</span>
                 </div>
-                <!-- Кнопка входа в админ-панель (ведет на login.html) -->
-                <div class="admin-ship" id="adminLoginBtn">⚡</div>
+                <!-- ИСПРАВЛЕНО: теперь это ссылка, а не див -->
+                <a href="login.html" class="admin-ship" id="adminLoginBtn">⚡</a>
             </div>
         </div>
 
@@ -862,7 +862,7 @@
         </div>
     </div>
 
-    <!-- Firebase SDK -->
+    <!-- Firebase SDK - ИСПРАВЛЕНО: версия 9.23.0 (теперь везде одинаковая) -->
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
     <script src="firebase-config.js"></script>
@@ -1218,18 +1218,14 @@
             FirestoreService.subscribeToCollection('snus', () => updateAllSections());
 
             // ========== КНОПКА ВХОДА В АДМИН-ПАНЕЛЬ ==========
+            // Код оставлен для совместимости, но теперь кнопка работает как обычная ссылка
             const adminLoginBtn = document.getElementById('adminLoginBtn');
-            console.log('Кнопка adminLoginBtn:', adminLoginBtn); // Для отладки
+            console.log('Кнопка adminLoginBtn:', adminLoginBtn);
             
             if (adminLoginBtn) {
-                adminLoginBtn.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    console.log('Клик по кнопке входа!');
-                    window.location.href = 'login.html';
-                });
-            } else {
-                console.error('Кнопка adminLoginBtn не найдена!');
+                // Убираем старый обработчик, чтобы не мешал ссылке
+                // Теперь кнопка работает как обычная ссылка благодаря тегу <a>
+                console.log('Кнопка входа теперь работает как ссылка на login.html');
             }
 
             // ========== КОРЗИНА ==========
