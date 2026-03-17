@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>VAPEOPT | КАТАЛОГ</title>
     <style>
-        /* Все ваши стили остаются без изменений */
         * {
             margin: 0;
             padding: 0;
@@ -226,6 +225,9 @@
             padding-top: 20px;
             position: relative;
             z-index: 2;
+            overflow-y: auto;
+            min-height: 0;
+            padding-bottom: 10px;
         }
 
         .cargo-module {
@@ -301,13 +303,22 @@
             100% { background-position: 20px 20px; }
         }
 
-        .cargo-icon {
-            font-size: 2.5rem;
+        .cargo-icon-img {
+            width: 50px;
+            height: 50px;
+            object-fit: contain;
             margin-bottom: 8px;
             filter: drop-shadow(0 0 10px #3e7bff);
             animation: iconFloat 3s ease-in-out infinite;
             position: relative;
             z-index: 2;
+        }
+
+        /* Увеличенная иконка для расходников */
+        .cargo-icon-img.special-icon {
+            width: 100px; /* Увеличено в 1.5 раза */
+            height: 100px; /* Увеличено в 1.5 раза */
+            margin-bottom: -5px; /* Уменьшено с 8px до 5px */
         }
 
         @keyframes iconFloat {
@@ -324,6 +335,8 @@
             animation: textGlow 2s ease-in-out infinite;
             position: relative;
             z-index: 2;
+            text-align: center;
+            margin-bottom: 5px;
         }
 
         @keyframes textGlow {
@@ -342,6 +355,7 @@
             cursor: pointer;
             position: relative;
             z-index: 2;
+            width: fit-content;
         }
 
         .cargo-data.positive {
@@ -770,7 +784,8 @@
 
         @media (max-width: 400px) {
             .ship-name { font-size: 1.8rem; }
-            .cargo-icon { font-size: 2rem; }
+            .cargo-icon-img { width: 40px; height: 40px; }
+            .cargo-icon-img.special-icon { width: 60px; height: 60px; } /* Адаптация для мобильных */
             .cargo-name { font-size: 0.8rem; }
             .cart-item-image { width: 60px; height: 60px; }
             .cart-items-grid { gap: 8px; }
@@ -795,7 +810,7 @@
                     🛒
                     <span class="cart-count" id="cartCount">0</span>
                 </div>
-                <!-- ИСПРАВЛЕНО: теперь это ссылка, а не див -->
+                <!-- Кнопка входа в админ-панель -->
                 <a href="login.html" class="admin-ship" id="adminLoginBtn">⚡</a>
             </div>
         </div>
@@ -862,7 +877,7 @@
         </div>
     </div>
 
-    <!-- Firebase SDK - ИСПРАВЛЕНО: версия 9.23.0 (теперь везде одинаковая) -->
+    <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
     <script src="firebase-config.js"></script>
@@ -870,11 +885,36 @@
     <script>
         // ==================== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ ====================
         const sections = [
-            { id: 1, name: 'Жидкости', icon: '🧪', link: 'zhidkosti.html' },
-            { id: 2, name: 'Расходники', icon: '⚙️', link: 'rashodniki.html' },
-            { id: 3, name: 'POD', icon: '📦', link: 'pod.html' },
-            { id: 4, name: 'Одноразки', icon: '💨', link: 'odnorazki.html' },
-            { id: 5, name: 'Снюс', icon: '🫑', link: 'snus.html' }
+            { 
+                id: 1, 
+                name: 'Жидкости', 
+                icon: 'https://i.ibb.co/84bSpmp5/liquid-icon.png', 
+                link: 'zhidkosti.html' 
+            },
+            { 
+                id: 2, 
+                name: 'Расходники', 
+                icon: 'https://i.ibb.co/nNwbtCP0/consumable-icon.png', 
+                link: 'rashodniki.html' 
+            },
+            { 
+                id: 3, 
+                name: 'POD', 
+                icon: 'https://i.ibb.co/zhhLJNj7/pod-icon.png', 
+                link: 'pod.html' 
+            },
+            { 
+                id: 4, 
+                name: 'Одноразки', 
+                icon: 'https://i.ibb.co/H1Yh7DJ/disposable-icon.png', 
+                link: 'odnorazki.html' 
+            },
+            { 
+                id: 5, 
+                name: 'Снюс', 
+                icon: 'https://i.ibb.co/wNRFkvZZ/snus-icon.png', 
+                link: 'snus.html' 
+            }
         ];
 
         let cart = [];
@@ -1146,9 +1186,12 @@
             
             const countClass = getCountClass(count);
             const countText = getCountText(count);
+            
+            // Добавляем специальный класс для иконки расходников
+            const iconClass = section.name === 'Расходники' ? 'cargo-icon-img special-icon' : 'cargo-icon-img';
 
             module.innerHTML = `
-                <span class="cargo-icon">${section.icon}</span>
+                <img src="${section.icon}" class="${iconClass}" alt="${section.name}" onerror="this.src='https://via.placeholder.com/50x50/10213f/3e7bff?text=${section.name[0]}'">
                 <span class="cargo-name">${section.name}</span>
                 <span class="cargo-data ${countClass}" data-id="${section.id}">${countText}</span>
             `;
@@ -1211,21 +1254,12 @@
             loadCart();
 
             // Подписываемся на изменения в Firebase
-            FirestoreService.subscribeToCollection('liquids', () => updateAllSections());
-            FirestoreService.subscribeToCollection('consumables', () => updateAllSections());
-            FirestoreService.subscribeToCollection('pod', () => updateAllSections());
-            FirestoreService.subscribeToCollection('disposables', () => updateAllSections());
-            FirestoreService.subscribeToCollection('snus', () => updateAllSections());
-
-            // ========== КНОПКА ВХОДА В АДМИН-ПАНЕЛЬ ==========
-            // Код оставлен для совместимости, но теперь кнопка работает как обычная ссылка
-            const adminLoginBtn = document.getElementById('adminLoginBtn');
-            console.log('Кнопка adminLoginBtn:', adminLoginBtn);
-            
-            if (adminLoginBtn) {
-                // Убираем старый обработчик, чтобы не мешал ссылке
-                // Теперь кнопка работает как обычная ссылка благодаря тегу <a>
-                console.log('Кнопка входа теперь работает как ссылка на login.html');
+            if (typeof FirestoreService !== 'undefined') {
+                FirestoreService.subscribeToCollection('liquids', updateAllSections);
+                FirestoreService.subscribeToCollection('consumables', updateAllSections);
+                FirestoreService.subscribeToCollection('pod', updateAllSections);
+                FirestoreService.subscribeToCollection('disposables', updateAllSections);
+                FirestoreService.subscribeToCollection('snus', updateAllSections);
             }
 
             // ========== КОРЗИНА ==========
