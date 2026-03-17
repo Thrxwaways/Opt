@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>VAPEOPT | КАТАЛОГ СНЮСА/ПАУЧЕЙ</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <div class="ship-hud">
+        <div class="hologram-ring"></div>
+        <div class="hologram-ring2"></div>
+
+        <div class="ship-header">
+            <div class="ship-title">
+                <div class="ship-name">VAPEOPT</div>
+                <div class="ship-sub">КАТАЛОГ СНЮСА/ПАУЧЕЙ</div>
+            </div>
+            <div class="header-controls">
+                <div class="cart-icon hidden" id="cartIcon">
+                    🛒
+                    <span class="cart-count" id="cartCount">0</span>
+                </div>
+                <a href="index.html" class="back-link" title="Назад"></a>
+            </div>
+        </div>
+
+        <div class="products-scroll" id="productsContainer">
+            <div class="loading-sections">Загрузка товаров...</div>
+        </div>
+    </div>
+
+    <div class="modal" id="productModal">
+        <div class="modal-content">
+            <button class="modal-close-btn" id="modalCloseBtn">✕</button>
+            
+            <div class="modal-header">
+                <div class="modal-product-name" id="modalProductName"></div>
+                <div class="modal-image-container">
+                    <img src="" alt="" class="modal-product-image" id="modalImage">
+                </div>
+            </div>
+
+            <div class="modal-scroll-area" id="modalScrollArea">
+                <div id="modalItemsContainer"></div>
+            </div>
+
+            <div class="modal-footer">
+                <div class="total-price">
+                    <span class="price-label">ЦЕНА ЗА ШТ:</span>
+                    <span class="price-value" id="modalPrice">0</span>
+                    <span class="price-currency">Br</span>
+                </div>
+                <button class="modal-order-btn" id="modalOrderBtn">В КОРЗИНУ</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="cart-modal" id="cartModal">
+        <div class="cart-content">
+            <div class="cart-header">
+                <h2>🛒 КОРЗИНА</h2>
+                <button class="close-cart" id="closeCart">✕</button>
+            </div>
+            
+            <div class="cart-items-grid" id="cartItemsGrid">
+                <div class="cart-empty">🛒 КОРЗИНА ПУСТА</div>
+            </div>
+
+            <div class="cart-footer">
+                <div class="customer-fields">
+                    <div class="customer-field" id="telegramField">
+                        <label>📱 TELEGRAM USERNAME</label>
+                        <input type="text" id="telegramUsername" placeholder="@username" autocomplete="off">
+                    </div>
+                    <div class="customer-field" id="nameField">
+                        <label>👤 ИМЯ</label>
+                        <input type="text" id="customerName" placeholder="Введите ваше имя" autocomplete="off">
+                    </div>
+                </div>
+
+                <div class="cart-summary">
+                    <div class="summary-left">
+                        <span class="summary-label">ТОВАРОВ:</span>
+                        <span class="summary-value" id="summaryItems">0</span>
+                    </div>
+                    <div class="summary-right">
+                        <span class="summary-price-label">ИТОГО:</span>
+                        <span class="summary-price" id="summaryPrice">0</span>
+                        <span class="summary-currency">Br</span>
+                    </div>
+                </div>
+
+                <button class="checkout-btn" id="checkoutBtn">ОФОРМИТЬ ЗАКАЗ</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js" defer></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js" defer></script>
+    <script src="js/firebase-config.js" defer></script>
+    <script src="js/cart-script.js" defer></script>
+
+    <script defer>
+        const COLLECTION_NAME = 'snus';
+        
+        let products = [];
+        let currentProductIndex = -1;
+        let selectedItemIndex = -1;
+
+        async function loadProducts() {
+            try {
+                products = await FirestoreService.getCollection(COLLECTION_NAME);
+                displayProducts();
+            } catch (error) {
+                console.error('Ошибка загрузки:', error);
+                products = [];
+                displayProducts();
+            }
+        }
+
+        function getStrengthClass(strength) {
+            const value = parseInt(strength);
+            if (value <= 25) return 'strength-25';
+            if (value <= 50) return 'strength-50';
+            if (value <= 75) return 'strength-75';
+            if (value <= 100) return 'strength-100';
+            if (value <= 150) return 'strength-150';
+            return 'strength-200';
+        }
+
+        function displayProducts() {
+            const container = document.getElementById('productsContainer');
+            
+            if (products.length === 0) {
+                container.innerHTML = '<div class="empty-message">НА ДАННЫЙ МОМЕНТ ТОВАРОВ НЕТ</div>';
+                return;
+            }
+
+            const inStockProducts = products.filter(product => 
+                product.items && product.items.some(item => item.inStock !== false)
+            );
+            
+            const outOfStockProducts = products.filter(product => 
+                !product.items || !product.items.some(item => item.inStock !== false)
+            );
+
+            let html = '';
+
+            if (inStockProducts.length > 0) {
+                html += '<div class="section-title in-stock">✔ В НАЛИЧИИ</div>';
+                html += '<div class="products-grid">';
+                
+                inStockProducts.forEach((product, index) => {
+                    const originalIndex = products.findIndex(p => p.id === product.id);
+                    
+                    html += `
+                        <div class="product-card ${product.isNew ? 'new-item' : ''}" onclick="openProductModal(${originalIndex})">
+                            <img src="${product.image || 'https://via.placeholder.com/80x80/10213f/3e7bff?text=' + encodeURIComponent((product.name || 'Товар').substring(0, 3))}" 
+                                 alt="${product.name}" 
+                                 class="product-image"
+                                 onerror="this.src='https://via.placeholder.com/80x80/10213f/3e7bff?text=Нет+фото'"
+                                 loading="lazy">
+                            <div class="product-name">${product.name || 'Без названия'}</div>
+                            <div class="product-price">${product.price || 0} Br</div>
+                        </div>
+                    `;
+                });
+                
+                html += '</div>';
+            }
+
+            if (outOfStockProducts.length > 0) {
+                html += '<div class="section-title out-of-stock">✖ НЕТ В НАЛИЧИИ</div>';
+                html += '<div class="products-grid">';
+                
+                outOfStockProducts.forEach((product, index) => {
+                    const originalIndex = products.findIndex(p => p.id === product.id);
+                    
+                    html += `
+                        <div class="product-card out-of-stock" onclick="showOutOfStockNotification()">
+                            <img src="${product.image || 'https://via.placeholder.com/80x80/4a5568/718096?text=' + encodeURIComponent((product.name || 'Товар').substring(0, 3))}" 
+                                 alt="${product.name}" 
+                                 class="product-image"
+                                 onerror="this.src='https://via.placeholder.com/80x80/4a5568/718096?text=Нет+фото'"
+                                 loading="lazy">
+                            <div class="product-name">${product.name || 'Без названия'}</div>
+                            <div class="product-price">${product.price || 0} Br</div>
+                        </div>
+                    `;
+                });
+                
+                html += '</div>';
+            }
+
+            container.innerHTML = html;
+        }
+
+        window.showOutOfStockNotification = function() {
+            if (typeof showNotification === 'function') {
+                showNotification('❌ Товара нет в наличии', 'error');
+            }
+        };
+
+        window.selectItem = function(index, event) {
+            if (event) event.stopPropagation();
+            
+            const product = products[currentProductIndex];
+            if (!product || !product.items || !product.items[index] || product.items[index].inStock === false) return;
+            
+            selectedItemIndex = selectedItemIndex === index ? -1 : index;
+            openProductModal(currentProductIndex);
+        };
+
+        window.updateQuantity = function(itemIndex, change, event) {
+            if (event) event.stopPropagation();
+            
+            const product = products[currentProductIndex];
+            if (!product || !product.items || !product.items[itemIndex]) return;
+            
+            const item = product.items[itemIndex];
+            item.quantity = Math.max(1, (item.quantity || 1) + change);
+            
+            const input = document.getElementById(`quantity-${itemIndex}`);
+            if (input) input.value = item.quantity;
+        };
+
+        window.setQuantity = function(itemIndex, value, event) {
+            if (event) event.stopPropagation();
+            
+            const product = products[currentProductIndex];
+            if (!product || !product.items || !product.items[itemIndex]) return;
+            
+            const item = product.items[itemIndex];
+            const num = parseInt(value) || 1;
+            item.quantity = Math.max(1, num);
+        };
+
+        window.openProductModal = function(index) {
+            const product = products[index];
+            if (!product) return;
+            
+            currentProductIndex = index;
+            
+            if (product.items) {
+                product.items.forEach(item => {
+                    item.quantity = 1;
+                });
+            }
+            
+            const modal = document.getElementById('productModal');
+            const modalImage = document.getElementById('modalImage');
+            const modalPrice = document.getElementById('modalPrice');
+            const modalProductName = document.getElementById('modalProductName');
+            const modalItemsContainer = document.getElementById('modalItemsContainer');
+
+            modalImage.src = product.image || 'https://via.placeholder.com/150x150/10213f/3e7bff?text=' + encodeURIComponent((product.name || 'Товар').substring(0, 3));
+            modalImage.alt = product.name;
+            modalPrice.textContent = product.price || 0;
+            modalProductName.textContent = product.name || 'Без названия';
+            
+            const inStockItems = product.items ? product.items.filter(item => item.inStock !== false) : [];
+            const outOfStockItems = product.items ? product.items.filter(item => item.inStock === false) : [];
+            
+            let itemsHtml = '';
+            
+            if (inStockItems.length > 0) {
+                itemsHtml += `
+                    <div class="stock-section">
+                        <div class="stock-section-title in-stock">✔ В НАЛИЧИИ</div>
+                        <div class="modal-items-list">
+                `;
+                
+                inStockItems.forEach((item, idx) => {
+                    const originalIndex = product.items.findIndex(i => i.name === item.name && i.strength === item.strength);
+                    const isSelected = selectedItemIndex === originalIndex;
+                    const strengthClass = getStrengthClass(item.strength || 0);
+                    
+                    itemsHtml += `
+                        <div class="modal-item in-stock ${isSelected ? 'selected' : ''}" onclick="selectItem(${originalIndex}, event)">
+                            <div class="item-name">${item.name || 'Без названия'}</div>
+                            <div class="item-details">
+                                <div class="item-attributes">
+                                    <div class="strength-badge ${strengthClass}">
+                                        <span class="strength-value">${item.strength || '0'}</span>
+                                        <span class="strength-unit">мг</span>
+                                    </div>
+                                </div>
+                                <div class="quantity-selector ${isSelected ? 'show' : ''}" id="selector-${originalIndex}">
+                                    <button class="quantity-btn" onclick="updateQuantity(${originalIndex}, -1, event)">−</button>
+                                    <input type="text" class="quantity-input" id="quantity-${originalIndex}" value="${item.quantity || 1}" 
+                                           onchange="setQuantity(${originalIndex}, this.value, event)" 
+                                           onclick="event.stopPropagation()">
+                                    <button class="quantity-btn" onclick="updateQuantity(${originalIndex}, 1, event)">+</button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                itemsHtml += `</div></div>`;
+            }
+            
+            if (outOfStockItems.length > 0) {
+                itemsHtml += `
+                    <div class="stock-section">
+                        <div class="stock-section-title out-of-stock">✖ НЕТ В НАЛИЧИИ</div>
+                        <div class="modal-items-list">
+                `;
+                
+                outOfStockItems.forEach((item) => {
+                    itemsHtml += `
+                        <div class="modal-item out-of-stock">
+                            <div class="item-name">${item.name || 'Без названия'}</div>
+                            <div class="item-details">
+                                <div class="item-attributes">
+                                    <div class="strength-badge">
+                                        <span class="strength-value">${item.strength || '0'}</span>
+                                        <span class="strength-unit">мг</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+                
+                itemsHtml += `</div></div>`;
+            }
+            
+            modalItemsContainer.innerHTML = itemsHtml;
+            modal.classList.add('show');
+        };
+
+        function addToCart() {
+            if (selectedItemIndex === -1) {
+                if (typeof showNotification === 'function') {
+                    showNotification('❌ Выберите крепость', 'warning');
+                }
+                return;
+            }
+            
+            const product = products[currentProductIndex];
+            const item = product.items[selectedItemIndex];
+            
+            if (!item || item.quantity <= 0) {
+                if (typeof showNotification === 'function') {
+                    showNotification('❌ Укажите количество', 'warning');
+                }
+                return;
+            }
+
+            if (window.addSnusToCart) {
+                window.addSnusToCart(product, item, item.quantity);
+                selectedItemIndex = -1;
+                openProductModal(currentProductIndex);
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('productModal').classList.remove('show');
+            if (currentProductIndex !== -1 && products[currentProductIndex] && products[currentProductIndex].items) {
+                products[currentProductIndex].items.forEach(item => {
+                    item.quantity = 1;
+                });
+            }
+            selectedItemIndex = -1;
+        }
+
+        async function getNextOrderNumber() {
+            try {
+                if (typeof FirestoreService === 'undefined') return 1;
+                const orders = await FirestoreService.getCollection('orders');
+                if (orders.length === 0) return 1;
+                const maxNumber = Math.max(...orders.map(o => o.orderNumber || 0));
+                return maxNumber + 1;
+            } catch (error) {
+                console.error('Ошибка получения номера заказа:', error);
+                return 1;
+            }
+        }
+
+        async function checkout() {
+            const telegramInput = document.getElementById('telegramUsername');
+            const nameInput = document.getElementById('customerName');
+            const telegramField = document.getElementById('telegramField');
+            const nameField = document.getElementById('nameField');
+            
+            if (!telegramInput || !nameInput) return;
+            
+            let hasError = false;
+
+            telegramField.classList.remove('error');
+            nameField.classList.remove('error');
+
+            if (!telegramInput.value.trim()) {
+                telegramField.classList.add('error');
+                if (typeof showNotification === 'function') {
+                    showNotification('❌ Заполните Telegram username', 'warning');
+                }
+                hasError = true;
+            } else if (!telegramInput.value.trim().startsWith('@')) {
+                telegramField.classList.add('error');
+                if (typeof showNotification === 'function') {
+                    showNotification('❌ Telegram username должен начинаться с @', 'warning');
+                }
+                hasError = true;
+            }
+
+            if (!nameInput.value.trim()) {
+                nameField.classList.add('error');
+                if (!hasError && typeof showNotification === 'function') {
+                    showNotification('❌ Заполните поле Имя', 'warning');
+                }
+                hasError = true;
+            }
+
+            if (hasError || !window.cart || window.cart.length === 0) return;
+
+            try {
+                const nextNumber = await getNextOrderNumber();
+                
+                const order = {
+                    orderNumber: nextNumber,
+                    orderId: `№${String(nextNumber).padStart(3, '0')}`,
+                    items: window.cart,
+                    customer: {
+                        telegram: telegramInput.value.trim(),
+                        name: nameInput.value.trim()
+                    },
+                    totalItems: window.cart.reduce((sum, item) => sum + item.quantity, 0),
+                    totalPrice: window.cart.reduce((sum, item) => sum + (item.price * item.quantity), 0),
+                    status: 'pending',
+                    createdAt: new Date().toISOString(),
+                    currency: 'BYN'
+                };
+
+                if (typeof FirestoreService !== 'undefined') {
+                    await FirestoreService.saveDocument('orders', order);
+                }
+                
+                window.cart = [];
+                if (typeof window.saveCart === 'function') {
+                    window.saveCart();
+                }
+                telegramInput.value = '';
+                nameInput.value = '';
+                
+                if (typeof showNotification === 'function') {
+                    showNotification('✅ Заказ успешно оформлен!', 'success');
+                }
+                document.getElementById('cartModal').classList.remove('show');
+                
+            } catch (error) {
+                console.error('Ошибка оформления заказа:', error);
+                if (typeof showNotification === 'function') {
+                    showNotification('❌ Ошибка при оформлении заказа', 'error');
+                }
+            }
+        }
+
+        async function init() {
+            await loadProducts();
+
+            document.getElementById('modalCloseBtn').addEventListener('click', closeModal);
+            document.getElementById('modalOrderBtn').addEventListener('click', addToCart);
+            
+            document.getElementById('productModal').addEventListener('click', (e) => {
+                if (e.target === document.getElementById('productModal')) {
+                    closeModal();
+                }
+            });
+
+            const cartModal = document.getElementById('cartModal');
+            const closeCart = document.getElementById('closeCart');
+            const checkoutBtn = document.getElementById('checkoutBtn');
+
+            closeCart.addEventListener('click', () => {
+                cartModal.classList.remove('show');
+            });
+
+            checkoutBtn.addEventListener('click', checkout);
+
+            cartModal.addEventListener('click', (e) => {
+                if (e.target === cartModal) {
+                    cartModal.classList.remove('show');
+                }
+            });
+        }
+
+        init();
+    </script>
+</body>
+</html>

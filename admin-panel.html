@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>VAPEOPT | АДМИН-ПАНЕЛЬ</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <div class="ship-hud">
+        <div class="hologram-ring"></div>
+        <div class="hologram-ring2"></div>
+
+        <div class="ship-header">
+            <div class="ship-title">
+                <div class="ship-name">VAPEOPT</div>
+                <div class="ship-sub">АДМИН-ПАНЕЛЬ</div>
+            </div>
+            <div class="header-controls">
+                <a href="index.html" class="control-btn" title="На главную">🏠</a>
+                <button class="logout-btn" id="logoutBtn" title="Выйти">🚪</button>
+            </div>
+        </div>
+
+        <div class="ship-grid" id="shipGrid">
+            <div class="loading-sections">Загрузка разделов...</div>
+        </div>
+
+        <div class="orders-button">
+            <button class="orders-btn" id="showOrdersBtn">
+                📋 ЗАКАЗЫ
+                <span class="order-count" id="pendingOrdersCount">0</span>
+            </button>
+        </div>
+
+        <div class="bottom-panel">
+            <div class="bottom-email" id="currentUserEmail">Загрузка...</div>
+        </div>
+    </div>
+
+    <div class="orders-modal" id="ordersModal">
+        <div class="orders-modal-content">
+            <div class="orders-modal-header">
+                <h2>📋 УПРАВЛЕНИЕ ЗАКАЗАМИ</h2>
+                <button class="close-orders-modal" id="closeOrdersModal">✕</button>
+            </div>
+
+            <div class="orders-tabs">
+                <div class="orders-tab active" onclick="switchOrdersTab('pending')" id="tabPending">🕒 НЕВЫПОЛНЕННЫЕ</div>
+                <div class="orders-tab" onclick="switchOrdersTab('completed')" id="tabCompleted">✅ ВЫПОЛНЕННЫЕ</div>
+            </div>
+
+            <div class="orders-scroll-area">
+                <div class="orders-grid" id="ordersGrid">
+                    <div class="empty-orders">Загрузка заказов...</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js" defer></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js" defer></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js" defer></script>
+    <script src="js/firebase-config.js" defer></script>
+    <script src="js/auth.js" defer></script>
+    
+    <script defer>
+        let currentTab = 'pending';
+        let allOrders = [];
+        let sectionsData = [];
+        let isUpdating = false;
+
+        const mockSections = [
+            { name: 'Жидкости', icon: 'https://i.ibb.co/84bSpmp5/liquid-icon.png', inStock: 3, outOfStock: 0, link: 'admin/zhidk-admin.html' },
+            { name: 'Расходники', icon: 'https://i.ibb.co/nNwbtCP0/consumable-icon.png', inStock: 2, outOfStock: 1, link: 'admin/rashod-admin.html' },
+            { name: 'POD', icon: 'https://i.ibb.co/zhhLJNj7/pod-icon.png', inStock: 4, outOfStock: 0, link: 'admin/pod-admin.html' },
+            { name: 'Одноразки', icon: 'https://i.ibb.co/H1Yh7DJ/disposable-icon.png', inStock: 5, outOfStock: 2, link: 'admin/odnoraz-admin.html' },
+            { name: 'Снюс', icon: 'https://i.ibb.co/wNRFkvZZ/snus-icon.png', inStock: 1, outOfStock: 3, link: 'admin/snus-admin.html' }
+        ];
+
+        async function getSectionsData() {
+            try {
+                if (typeof FirestoreService === 'undefined' || !FirestoreService.getCollection) {
+                    console.log('FirestoreService не доступен, используем заглушку');
+                    return mockSections;
+                }
+
+                const [liquids, consumables, pod, disposables, snus] = await Promise.all([
+                    FirestoreService.getCollection('liquids').catch(() => []),
+                    FirestoreService.getCollection('consumables').catch(() => []),
+                    FirestoreService.getCollection('pod').catch(() => []),
+                    FirestoreService.getCollection('disposables').catch(() => []),
+                    FirestoreService.getCollection('snus').catch(() => [])
+                ]);
+                
+                if (!liquids.length && !consumables.length && !pod.length && !disposables.length && !snus.length) {
+                    return mockSections;
+                }
+                
+                const liquidsInStock = liquids.filter(l => l.flavors?.some(f => f.inStock !== false)).length;
+                const liquidsOutOfStock = liquids.filter(l => !l.flavors?.some(f => f.inStock !== false)).length;
+                
+                const consumablesInStock = consumables.filter(c => c.items?.some(item => item.inStock !== false)).length;
+                const consumablesOutOfStock = consumables.filter(c => !c.items?.some(item => item.inStock !== false)).length;
+                
+                const podInStock = pod.filter(p => p.items?.some(item => item.inStock !== false)).length;
+                const podOutOfStock = pod.filter(p => !p.items?.some(item => item.inStock !== false)).length;
+                
+                const disposablesInStock = disposables.filter(d => d.items?.some(item => item.inStock !== false)).length;
+                const disposablesOutOfStock = disposables.filter(d => !d.items?.some(item => item.inStock !== false)).length;
+                
+                const snusInStock = snus.filter(s => s.items?.some(item => item.inStock !== false)).length;
+                const snusOutOfStock = snus.filter(s => !s.items?.some(item => item.inStock !== false)).length;
+                
+                return [
+                    { name: 'Жидкости', icon: 'https://i.ibb.co/84bSpmp5/liquid-icon.png', inStock: liquidsInStock, outOfStock: liquidsOutOfStock, link: 'admin/zhidk-admin.html' },
+                    { name: 'Расходники', icon: 'https://i.ibb.co/nNwbtCP0/consumable-icon.png', inStock: consumablesInStock, outOfStock: consumablesOutOfStock, link: 'admin/rashod-admin.html' },
+                    { name: 'POD', icon: 'https://i.ibb.co/zhhLJNj7/pod-icon.png', inStock: podInStock, outOfStock: podOutOfStock, link: 'admin/pod-admin.html' },
+                    { name: 'Одноразки', icon: 'https://i.ibb.co/H1Yh7DJ/disposable-icon.png', inStock: disposablesInStock, outOfStock: disposablesOutOfStock, link: 'admin/odnoraz-admin.html' },
+                    { name: 'Снюс', icon: 'https://i.ibb.co/wNRFkvZZ/snus-icon.png', inStock: snusInStock, outOfStock: snusOutOfStock, link: 'admin/snus-admin.html' }
+                ];
+            } catch (error) {
+                console.error('Ошибка получения данных:', error);
+                return mockSections;
+            }
+        }
+
+        function createModule(section) {
+            const module = document.createElement('div');
+            module.className = 'cargo-module';
+            
+            const stockClass = section.inStock > 0 ? 'in-stock' : 'out-of-stock';
+            const stockText = section.inStock > 0 ? `в наличии: ${section.inStock}` : `нет в наличии: ${section.outOfStock}`;
+            const iconClass = section.name === 'Расходники' ? 'cargo-icon-img special-icon' : 'cargo-icon-img';
+
+            module.innerHTML = `
+                <img src="${section.icon}" class="${iconClass}" alt="${section.name}" 
+                     onerror="this.src='https://via.placeholder.com/50x50/10213f/3e7bff?text=${section.name[0]}'"
+                     loading="lazy">
+                <span class="cargo-name">${section.name}</span>
+                <span class="stock-status ${stockClass}">${stockText}</span>
+            `;
+
+            module.addEventListener('click', () => window.location.href = section.link);
+            return module;
+        }
+
+        async function updateDisplay() {
+            if (isUpdating) return;
+            isUpdating = true;
+            
+            const grid = document.getElementById('shipGrid');
+            if (!grid) {
+                isUpdating = false;
+                return;
+            }
+            
+            try {
+                grid.innerHTML = '<div class="loading-sections">Загрузка разделов...</div>';
+                
+                sectionsData = await getSectionsData();
+                if (!sectionsData || sectionsData.length === 0) {
+                    isUpdating = false;
+                    return;
+                }
+                
+                grid.innerHTML = '';
+                
+                for (let i = 0; i < 4; i++) {
+                    grid.appendChild(createModule(sectionsData[i]));
+                }
+                
+                const lastRow = document.createElement('div');
+                lastRow.className = 'last-row';
+                lastRow.appendChild(createModule(sectionsData[4]));
+                
+                const emptyModule = document.createElement('div');
+                emptyModule.style.visibility = 'hidden';
+                emptyModule.style.pointerEvents = 'none';
+                emptyModule.className = 'cargo-module';
+                emptyModule.style.background = 'transparent';
+                emptyModule.style.border = 'none';
+                emptyModule.style.boxShadow = 'none';
+                lastRow.appendChild(emptyModule);
+                
+                grid.appendChild(lastRow);
+            } finally {
+                isUpdating = false;
+            }
+        }
+
+        async function loadOrders() {
+            try {
+                if (typeof FirestoreService !== 'undefined') {
+                    allOrders = await FirestoreService.getCollection('orders') || [];
+                } else {
+                    allOrders = [];
+                }
+                updateOrdersDisplay();
+            } catch (error) {
+                console.error('Ошибка загрузки заказов:', error);
+                allOrders = [];
+                updateOrdersDisplay();
+            }
+        }
+
+        function updateOrdersDisplay() {
+            const pendingCount = allOrders.filter(o => o.status === 'pending').length;
+            document.getElementById('pendingOrdersCount').textContent = pendingCount;
+            filterOrdersByTab();
+        }
+
+        function filterOrdersByTab() {
+            const orders = allOrders.filter(o => o.status === currentTab);
+            const ordersGrid = document.getElementById('ordersGrid');
+            
+            if (orders.length === 0) {
+                ordersGrid.innerHTML = `<div class="empty-orders">НЕТ ${currentTab === 'pending' ? 'НЕВЫПОЛНЕННЫХ' : 'ВЫПОЛНЕННЫХ'} ЗАКАЗОВ</div>`;
+                return;
+            }
+
+            let html = '';
+            orders.forEach(order => {
+                html += `
+                    <div class="order-card ${order.status}">
+                        <div class="order-header">
+                            <span class="order-number">${order.orderId || 'Заказ'}</span>
+                            <span class="order-date">${new Date(order.createdAt).toLocaleDateString()}</span>
+                        </div>
+                        <div class="order-customer">
+                            <span>${order.customer?.telegram || '@username'}</span>
+                            <span>${order.customer?.name || 'Имя'}</span>
+                        </div>
+                        <div class="order-footer">
+                            <span>ИТОГО: ${order.totalPrice || 0} BYN</span>
+                        </div>
+                    </div>
+                `;
+            });
+            ordersGrid.innerHTML = html;
+        }
+
+        window.switchOrdersTab = function(tab) {
+            currentTab = tab;
+            document.getElementById('tabPending').classList.remove('active');
+            document.getElementById('tabCompleted').classList.remove('active');
+            document.getElementById(`tab${tab.charAt(0).toUpperCase() + tab.slice(1)}`).classList.add('active');
+            filterOrdersByTab();
+        };
+
+        function initModal() {
+            const modal = document.getElementById('ordersModal');
+            const showBtn = document.getElementById('showOrdersBtn');
+            const closeBtn = document.getElementById('closeOrdersModal');
+
+            showBtn.addEventListener('click', () => {
+                modal.classList.add('show');
+            });
+
+            closeBtn.addEventListener('click', () => {
+                modal.classList.remove('show');
+            });
+
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    modal.classList.remove('show');
+                }
+            });
+        }
+
+        function setupAuth() {
+            const userEmailSpan = document.getElementById('currentUserEmail');
+            if (typeof auth !== 'undefined') {
+                auth.onAuthStateChanged(user => {
+                    if (user) {
+                        userEmailSpan.textContent = user.email;
+                    } else {
+                        userEmailSpan.textContent = 'Не авторизован';
+                    }
+                });
+            }
+
+            document.getElementById('logoutBtn').addEventListener('click', async () => {
+                if (typeof auth !== 'undefined') {
+                    await auth.signOut();
+                    window.location.href = 'login.html';
+                }
+            });
+        }
+
+        async function init() {
+            await updateDisplay();
+            await loadOrders();
+            initModal();
+            setupAuth();
+        }
+
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>

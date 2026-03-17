@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>VAPEOPT | КАТАЛОГ</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <div class="ship-hud">
+        <div class="hologram-ring"></div>
+        <div class="hologram-ring2"></div>
+
+        <div class="ship-header">
+            <div class="ship-title">
+                <div class="ship-name">VAPEOPT</div>
+                <div class="ship-sub">КАТАЛОГ ТОВАРОВ</div>
+            </div>
+            <div class="header-controls">
+                <div class="cart-icon hidden" id="cartIcon">
+                    🛒
+                    <span class="cart-count" id="cartCount">0</span>
+                </div>
+                <a href="login.html" class="admin-ship" id="adminLoginBtn" title="Вход для администратора">⚡</a>
+            </div>
+        </div>
+
+        <div class="ship-grid" id="shipGrid">
+            <div class="loading-sections">Загрузка разделов...</div>
+        </div>
+
+        <div class="ship-display">
+            <span class="arrow-up arrow-left">▲</span>
+            <span>ВЫБЕРИТЕ РАЗДЕЛ</span>
+            <span class="arrow-up arrow-right">▲</span>
+        </div>
+    </div>
+
+    <div class="cart-modal" id="cartModal">
+        <div class="cart-content">
+            <div class="cart-header">
+                <h2>🛒 КОРЗИНА</h2>
+                <button class="close-cart" id="closeCart">✕</button>
+            </div>
+            
+            <div class="cart-items-grid" id="cartItemsGrid">
+                <div class="cart-empty">🛒 КОРЗИНА ПУСТА</div>
+            </div>
+
+            <div class="cart-footer">
+                <div class="customer-fields">
+                    <div class="customer-field" id="telegramField">
+                        <label>📱 TELEGRAM USERNAME</label>
+                        <input type="text" id="telegramUsername" placeholder="@username" autocomplete="off">
+                    </div>
+                    <div class="customer-field" id="nameField">
+                        <label>👤 ИМЯ</label>
+                        <input type="text" id="customerName" placeholder="Введите ваше имя" autocomplete="off">
+                    </div>
+                </div>
+
+                <div class="cart-summary">
+                    <div class="summary-left">
+                        <span class="summary-label">ТОВАРОВ:</span>
+                        <span class="summary-value" id="summaryItems">0</span>
+                    </div>
+                    <div class="summary-right">
+                        <span class="summary-price-label">ИТОГО:</span>
+                        <span class="summary-price" id="summaryPrice">0</span>
+                        <span class="summary-currency">BYN</span>
+                    </div>
+                </div>
+
+                <button class="checkout-btn" id="checkoutBtn">ОФОРМИТЬ ЗАКАЗ</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js" defer></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js" defer></script>
+    <script src="js/firebase-config.js" defer></script>
+    <script src="js/auth.js" defer></script>
+    <script src="js/cart-script.js" defer></script>
+    
+    <script defer>
+        const sections = [
+            { id: 1, name: 'Жидкости', icon: 'https://i.ibb.co/84bSpmp5/liquid-icon.png', link: 'zhidkosti.html' },
+            { id: 2, name: 'Расходники', icon: 'https://i.ibb.co/nNwbtCP0/consumable-icon.png', link: 'rashodniki.html' },
+            { id: 3, name: 'POD', icon: 'https://i.ibb.co/zhhLJNj7/pod-icon.png', link: 'pod.html' },
+            { id: 4, name: 'Одноразки', icon: 'https://i.ibb.co/H1Yh7DJ/disposable-icon.png', link: 'odnorazki.html' },
+            { id: 5, name: 'Снюс', icon: 'https://i.ibb.co/wNRFkvZZ/snus-icon.png', link: 'snus.html' }
+        ];
+
+        async function getSectionCounts() {
+            try {
+                if (typeof FirestoreService === 'undefined') {
+                    return { liquids: 0, consumables: 0, pod: 0, disposable: 0, snus: 0 };
+                }
+
+                const [liquids, consumables, pod, disposables, snus] = await Promise.all([
+                    FirestoreService.getCollection('liquids').catch(() => []),
+                    FirestoreService.getCollection('consumables').catch(() => []),
+                    FirestoreService.getCollection('pod').catch(() => []),
+                    FirestoreService.getCollection('disposables').catch(() => []),
+                    FirestoreService.getCollection('snus').catch(() => [])
+                ]);
+
+                const liquidsInStock = liquids.filter(l => l.flavors?.some(f => f.inStock !== false)).length;
+                const consumablesInStock = consumables.filter(c => c.items?.some(item => item.inStock !== false)).length;
+                const podInStock = pod.filter(p => p.items?.some(item => item.inStock !== false)).length;
+                const disposablesInStock = disposables.filter(d => d.items?.some(item => item.inStock !== false)).length;
+                const snusInStock = snus.filter(s => s.items?.some(item => item.inStock !== false)).length;
+
+                return {
+                    liquids: liquidsInStock,
+                    consumables: consumablesInStock,
+                    pod: podInStock,
+                    disposable: disposablesInStock,
+                    snus: snusInStock
+                };
+            } catch (error) {
+                console.error('Ошибка получения количества товаров:', error);
+                return { liquids: 0, consumables: 0, pod: 0, disposable: 0, snus: 0 };
+            }
+        }
+
+        function createSectionModule(section, count) {
+            const module = document.createElement('div');
+            module.className = 'cargo-module';
+            
+            const countClass = count > 0 ? 'positive' : 'zero';
+            const countText = count > 0 ? `В наличии: ${count}` : 'Нет в наличии';
+            const iconClass = section.name === 'Расходники' ? 'cargo-icon-img special-icon' : 'cargo-icon-img';
+
+            module.innerHTML = `
+                <img src="${section.icon}" class="${iconClass}" alt="${section.name}" 
+                     onerror="this.src='https://via.placeholder.com/50x50/10213f/3e7bff?text=${section.name[0]}'"
+                     loading="lazy">
+                <span class="cargo-name">${section.name}</span>
+                <span class="cargo-data ${countClass}" data-id="${section.id}">${countText}</span>
+            `;
+
+            module.addEventListener('click', function(e) {
+                if (e.target.classList.contains('cargo-data')) return;
+                window.location.href = section.link;
+            });
+
+            const countElement = module.querySelector('.cargo-data');
+            countElement.addEventListener('click', function(e) {
+                e.stopPropagation();
+                if (count > 0) {
+                    window.location.href = section.link;
+                } else {
+                    if (typeof showNotification === 'function') {
+                        showNotification('В этом разделе пока нет товаров', 'warning');
+                    }
+                }
+            });
+
+            return module;
+        }
+
+        async function updateAllSections() {
+            const grid = document.getElementById('shipGrid');
+            if (!grid) return;
+            
+            grid.innerHTML = '<div class="loading-sections">Загрузка разделов...</div>';
+            
+            const counts = await getSectionCounts();
+            
+            grid.innerHTML = '';
+            
+            for (let i = 0; i < 4; i++) {
+                const count = i === 0 ? counts.liquids :
+                             i === 1 ? counts.consumables :
+                             i === 2 ? counts.pod :
+                             counts.disposable;
+                grid.appendChild(createSectionModule(sections[i], count));
+            }
+            
+            const lastRow = document.createElement('div');
+            lastRow.className = 'last-row';
+            
+            const snusModule = createSectionModule(sections[4], counts.snus);
+            lastRow.appendChild(snusModule);
+            
+            const emptyModule = document.createElement('div');
+            emptyModule.style.visibility = 'hidden';
+            emptyModule.style.pointerEvents = 'none';
+            emptyModule.className = 'cargo-module';
+            emptyModule.style.background = 'transparent';
+            emptyModule.style.boxShadow = 'none';
+            emptyModule.style.border = 'none';
+            lastRow.appendChild(emptyModule);
+            
+            grid.appendChild(lastRow);
+        }
+
+        function updateCartDisplay() {
+            const cartItemsGrid = document.getElementById('cartItemsGrid');
+            const summaryItems = document.getElementById('summaryItems');
+            const summaryPrice = document.getElementById('summaryPrice');
+            
+            if (!cartItemsGrid || !window.cart) return;
+
+            if (window.cart.length === 0) {
+                cartItemsGrid.innerHTML = '<div class="cart-empty">🛒 КОРЗИНА ПУСТА</div>';
+                if (summaryItems) summaryItems.textContent = '0';
+                if (summaryPrice) summaryPrice.textContent = '0';
+                return;
+            }
+
+            let html = '';
+            let totalItems = 0;
+            let totalPrice = 0;
+
+            window.cart.forEach((item, index) => {
+                totalItems += item.quantity;
+                totalPrice += item.price * item.quantity;
+
+                let itemDetails = '';
+
+                if (item.flavorName) {
+                    itemDetails = `${item.flavorName} • ${item.strengthText || '0'} мг • ${item.volume || 30} мл`;
+                } else if (item.resistance) {
+                    itemDetails = `${item.itemName} • ${item.resistance} Ом • ${item.volume || 30} мл`;
+                } else if (item.type === 'pod') {
+                    itemDetails = `${item.itemName}`;
+                } else if (item.strength && item.puffs) {
+                    itemDetails = `${item.itemName} • ${item.strength}% • ${item.puffs} тяг`;
+                } else if (item.type === 'snus') {
+                    itemDetails = `${item.itemName} • ${item.strength} мг`;
+                }
+
+                html += `
+                    <div class="cart-item-card">
+                        <img src="${item.image || 'https://via.placeholder.com/70x70/10213f/3e7bff?text=' + encodeURIComponent(item.name.substring(0, 3))}" 
+                             class="cart-item-image"
+                             onerror="this.src='https://via.placeholder.com/70x70/10213f/3e7bff?text=Нет+фото'"
+                             loading="lazy">
+                        <div class="cart-item-name">${item.name}</div>
+                        <div class="cart-item-details">${itemDetails}</div>
+                        <div class="cart-item-price-block">
+                            <span class="cart-item-price">${item.price} Br</span>
+                            <span class="cart-item-quantity">${item.quantity} шт</span>
+                        </div>
+                        <button class="cart-item-remove" onclick="removeFromCart(${index})" title="Удалить товар">✕</button>
+                    </div>
+                `;
+            });
+
+            cartItemsGrid.innerHTML = html;
+            if (summaryItems) summaryItems.textContent = totalItems;
+            if (summaryPrice) summaryPrice.textContent = totalPrice;
+        }
+
+        window.removeFromCart = function(index) {
+            if (index >= 0 && index < window.cart.length) {
+                window.cart.splice(index, 1);
+                if (typeof window.saveCart === 'function') {
+                    window.saveCart();
+                }
+                updateCartDisplay();
+                if (typeof showNotification === 'function') {
+                    showNotification('✅ Товар удален из корзины', 'success');
+                }
+            }
+        };
+
+        async function getNextOrderNumber() {
+            try {
+                if (typeof FirestoreService === 'undefined') return 1;
+                const orders = await FirestoreService.getCollection('orders');
+                if (orders.length === 0) return 1;
+                const maxNumber = Math.max(...orders.map(o => o.orderNumber || 0));
+                return maxNumber + 1;
+            } catch (error) {
+                console.error('Ошибка получения номера заказа:', error);
+                return 1;
+            }
+        }
+
+        async function checkout() {
+            const telegramInput = document.getElementById('telegramUsername');
+            const nameInput = document.getElementById('customerName');
+            const telegramField = document.getElementById('telegramField');
+            const nameField = document.getElementById('nameField');
+            
+            if (!telegramInput || !nameInput) return;
+            
+            let hasError = false;
+
+            telegramField.classList.remove('error');
+            nameField.classList.remove('error');
+
+            if (!telegramInput.value.trim()) {
+                telegramField.classList.add('error');
+                if (typeof showNotification === 'function') {
+                    showNotification('❌ Заполните Telegram username', 'warning');
+                }
+                hasError = true;
+            } else if (!telegramInput.value.trim().startsWith('@')) {
+                telegramField.classList.add('error');
+                if (typeof showNotification === 'function') {
+                    showNotification('❌ Telegram username должен начинаться с @', 'warning');
+                }
+                hasError = true;
+            }
+
+            if (!nameInput.value.trim()) {
+                nameField.classList.add('error');
+                if (!hasError && typeof showNotification === 'function') {
+                    showNotification('❌ Заполните поле Имя', 'warning');
+                }
+                hasError = true;
+            }
+
+            if (hasError || !window.cart || window.cart.length === 0) return;
+
+            try {
+                const nextNumber = await getNextOrderNumber();
+                
+                const order = {
+                    orderNumber: nextNumber,
+                    orderId: `№${String(nextNumber).padStart(3, '0')}`,
+                    items: window.cart,
+                    customer: {
+                        telegram: telegramInput.value.trim(),
+                        name: nameInput.value.trim()
+                    },
+                    totalItems: window.cart.reduce((sum, item) => sum + item.quantity, 0),
+                    totalPrice: window.cart.reduce((sum, item) => sum + (item.price * item.quantity), 0),
+                    status: 'pending',
+                    createdAt: new Date().toISOString(),
+                    currency: 'BYN'
+                };
+
+                if (typeof FirestoreService !== 'undefined') {
+                    await FirestoreService.saveDocument('orders', order);
+                }
+                
+                window.cart = [];
+                if (typeof window.saveCart === 'function') {
+                    window.saveCart();
+                }
+                telegramInput.value = '';
+                nameInput.value = '';
+                
+                if (typeof showNotification === 'function') {
+                    showNotification('✅ Заказ успешно оформлен!', 'success');
+                }
+                document.getElementById('cartModal').classList.remove('show');
+                
+            } catch (error) {
+                console.error('Ошибка оформления заказа:', error);
+                if (typeof showNotification === 'function') {
+                    showNotification('❌ Ошибка при оформлении заказа', 'error');
+                }
+            }
+        }
+
+        async function init() {
+            console.log('🚀 Инициализация index.html');
+            await updateAllSections();
+
+            const cartIcon = document.getElementById('cartIcon');
+            const cartModal = document.getElementById('cartModal');
+            const closeCart = document.getElementById('closeCart');
+            const checkoutBtn = document.getElementById('checkoutBtn');
+
+            if (cartIcon) {
+                cartIcon.addEventListener('click', () => {
+                    cartModal.classList.add('show');
+                    updateCartDisplay();
+                });
+            }
+
+            if (closeCart) {
+                closeCart.addEventListener('click', () => {
+                    cartModal.classList.remove('show');
+                });
+            }
+
+            if (checkoutBtn) {
+                checkoutBtn.addEventListener('click', checkout);
+            }
+
+            if (cartModal) {
+                cartModal.addEventListener('click', (e) => {
+                    if (e.target === cartModal) {
+                        cartModal.classList.remove('show');
+                    }
+                });
+            }
+
+            const originalSaveCart = window.saveCart;
+            window.saveCart = function() {
+                if (originalSaveCart) originalSaveCart();
+                updateCartDisplay();
+            };
+        }
+
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
